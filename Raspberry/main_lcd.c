@@ -22,12 +22,14 @@
  * This code is made for the W3C Web Of Things Plugfest in Dusseldorf (July 2017)
  * 14 june 2017
  * 
+gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_consumer.c ../../../sepa-C-kpi/sepa_secure.c ../../../sepa-C-kpi/jsmn.c -o main_lcd -pthread -lcurl `pkg-config --cflags --libs glib-2.0 libwebsockets` -lwiringPi -lwiringPiDev
  */
 
 #include <wiringPi.h>
 #include <lcd.h>
-#include "sepa_consumer.h"
+#include "../../../sepa-C-kpi/sepa_consumer.h"
 
+#define SEPA_LOGGER_ERROR
 //USE WIRINGPI PIN NUMBERS
 #define LCD_RS  25               //Register select pin
 #define LCD_E   24               //Enable Pin
@@ -40,7 +42,7 @@
 #define MAX_LENGHT		32		// 16*2
 #define DATA_BITS		4
 
-#define SPARQL_SUBSCRIPTION					"PREFIX wot:<http://www.arces.unibo.it/wot#> PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX td:<http://w3c.github.io/wot/w3c-wot-td-ontology.owl#> PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> SELECT ?instance ?input ?value WHERE {wot:RaspiLCD rdf:type td:Action. wot:RaspiLCD wot:hasInstance ?instance. ?instance rdf:type wot:ActionInstance. OPTIONAL {?instance td:hasInput ?input. ?input dul:hasDataValue ?value}}"
+#define SPARQL_SUBSCRIPTION					"SELECT ?input ?value WHERE {?input <http://hasDataValue.org> ?value}"
 #define SEPA_SUBSCRIPTION_ADDRESS			argv[1]
 
 int lcd;
@@ -54,6 +56,7 @@ void actionRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,
 		fprintfSepaNodes(stdout,added,addedlen,"");
 		strncpy(buffer,added[addedlen-1].value,MAX_LENGHT);
 		buffer[MAX_LENGHT]='\0';
+		lcdPosition(lcd,0,0);
 		lcdPuts(lcd,buffer);
 		freeSepaNodes(added,addedlen);
 	}
@@ -67,7 +70,7 @@ void actionRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,
 
 int main(int argc, char **argv) {
 	SEPA_subscription_params action_subscription = _initSubscription();
-	
+	int inutile;
 	printf("*\n* WOT Demo: 16x2 LCD screed actuator \n");
 	printf("* WOT Team (ARCES University of Bologna) - francesco.antoniazzi@unibo.it\n");
 	printf("\nUSAGE: ./main_lcd [sepa subscription address]\nPress Ctrl-C to exit\n\n");
@@ -81,10 +84,11 @@ int main(int argc, char **argv) {
 	sepa_subscriber_init();
 	sepa_subscription_builder(SPARQL_SUBSCRIPTION,NULL,NULL,SEPA_SUBSCRIPTION_ADDRESS,&action_subscription);
 	sepa_setSubscriptionHandlers(actionRequestNotification,NULL,&action_subscription);
-	fprintfSubscriptionParams(stdout,this_subscription);
+	fprintfSubscriptionParams(stdout,action_subscription);
 	
-	pause();
+kpSubscribe(&action_subscription);	
+
+	scanf("%d",&inutile);
 	
 	return 0;
 }
-
