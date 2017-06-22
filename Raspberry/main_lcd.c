@@ -42,22 +42,25 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #define MAX_LENGHT		32		// 16*2
 #define DATA_BITS		4
 
-#define SPARQL_SUBSCRIPTION					"SELECT ?input ?value WHERE {?input <http://hasDataValue.org> ?value}"
+#define SPARQL_SUBSCRIPTION	"PREFIX wot:<http://www.arces.unibo.it/wot#> PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX td:<http://w3c.github.io/wot/w3c-wot-td-ontology.owl#> PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> SELECT ?instance ?input ?value WHERE {wot:RaspiLCD rdf:type td:Action. wot:RaspiLCD wot:hasInstance ?instance. ?instance rdf:type wot:ActionInstance. OPTIONAL {?instance td:hasInput ?input. ?input dul:hasDataValue ?value}}"
 #define SEPA_SUBSCRIPTION_ADDRESS			argv[1]
 
 int lcd;
-char buffer[33];
 
 void actionRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,int removedlen) {
 	int i;
 	if (added!=NULL) {
 		if (addedlen>1) printf("%d new requested detected.\n On the screen only the last will be shown.\n",addedlen);
 		else printf("New request detected!\n!");
-		fprintfSepaNodes(stdout,added,addedlen,"");
-		strncpy(buffer,added[addedlen-1].value,MAX_LENGHT);
-		buffer[MAX_LENGHT]='\0';
-		lcdPosition(lcd,0,0);
-		lcdPuts(lcd,buffer);
+		for (i=0; i<addedlen; i++) {
+			if (!strcmp(added[i].bindingName,"value")) {
+				lcdPosition(lcd,0,0);
+				lcdPuts(lcd,"                               ");
+				lcdPosition(lcd,0,0);
+				lcdPuts(lcd,added[i].value);
+}
+		}
+		fprintfSepaNodes(stdout,added,addedlen,"value");
 		freeSepaNodes(added,addedlen);
 	}
 	if (removed!=NULL) {
@@ -73,7 +76,11 @@ int main(int argc, char **argv) {
 	int inutile;
 	printf("*\n* WOT Demo: 16x2 LCD screed actuator \n");
 	printf("* WOT Team (ARCES University of Bologna) - francesco.antoniazzi@unibo.it\n");
+	
+if (argc!=2) {
 	printf("\nUSAGE: ./main_lcd [sepa subscription address]\nPress Ctrl-C to exit\n\n");
+	return -1;
+}
 	
 	wiringPiSetup();
 	lcd = lcdInit(ROW_NUMBER,COL_NUMBER,DATA_BITS,
@@ -87,7 +94,7 @@ int main(int argc, char **argv) {
 	fprintfSubscriptionParams(stdout,action_subscription);
 	
 kpSubscribe(&action_subscription);	
-
+	lcdPuts(lcd,"Init OK");
 	scanf("%d",&inutile);
 	
 	return 0;
