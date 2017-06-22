@@ -27,7 +27,8 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 
 #include <wiringPi.h>
 #include <lcd.h>
-#include "../../../sepa-C-kpi/sepa_consumer.h"
+#include <unistd.h>
+#include "../../../sepa-C-kpi/sepa_aggregator.h"
 
 #define SEPA_LOGGER_ERROR
 //USE WIRINGPI PIN NUMBERS
@@ -41,11 +42,20 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #define COL_NUMBER		16
 #define MAX_LENGHT		32		// 16*2
 #define DATA_BITS		4
+#define ALIVE_SECONDS	10
 
+#define THING_UUID			"Raspberry1"
+#define LOCATION_UUID		"MyLocation"
+#define THING_DESCRIPTION   "PREFIX wot:<http://www.arces.unibo.it/wot#> PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX td:<http://w3c.github.io/wot/w3c-wot-td-ontology.owl#> PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> PREFIX saref:<http://ontology.tno.nl/saref#> INSERT {%s rdf:type td:Thing. %s td:hasName 'RaspiLCD'. %s wot:isDiscoverable 'true'. %s dul:hasLocation %s. %s rdf:type saref:Actuator} WHERE {%s rdf:type dul:PhysicalPlace}"
 #define SPARQL_SUBSCRIPTION	"PREFIX wot:<http://www.arces.unibo.it/wot#> PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX td:<http://w3c.github.io/wot/w3c-wot-td-ontology.owl#> PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> SELECT ?instance ?input ?value WHERE {wot:RaspiLCD rdf:type td:Action. wot:RaspiLCD wot:hasInstance ?instance. ?instance rdf:type wot:ActionInstance. OPTIONAL {?instance td:hasInput ?input. ?input dul:hasDataValue ?value}}"
-#define SEPA_SUBSCRIPTION_ADDRESS			argv[1]
+
+#define SEPA_SUBSCRIPTION_ADDRESS			"ws://wot.arces.unibo.it:9000/subscribe"
+#define SEPA_UPDATE_ADDRESS					"http://wot.arces.unibo.it:8000/sparql"
 
 int lcd;
+
+void son_process();
+void father_process();
 
 void actionRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,int removedlen) {
 	int i;
@@ -72,15 +82,16 @@ void actionRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,
 }
 
 int main(int argc, char **argv) {
-	SEPA_subscription_params action_subscription = _initSubscription();
-	int inutile;
+	char thing_description[1000]="";
+	char thingUUID[20] = THING_UUID;
+	char location[20] = LOCATION_UUID;
+	
+	int o,alive_pid;
 	printf("*\n* WOT Demo: 16x2 LCD screed actuator \n");
 	printf("* WOT Team (ARCES University of Bologna) - francesco.antoniazzi@unibo.it\n");
-	
-if (argc!=2) {
 	printf("\nUSAGE: ./main_lcd [sepa subscription address]\nPress Ctrl-C to exit\n\n");
-	return -1;
-}
+	
+	sprintf(thing_description,THING_DESCRIPTION,thingUUID,thingUUID,thingUUID,thingUUID,location,thingUUID,location);
 	
 	wiringPiSetup();
 	lcd = lcdInit(ROW_NUMBER,COL_NUMBER,DATA_BITS,
@@ -88,14 +99,50 @@ if (argc!=2) {
 			0,0,0,0);
 	lcdPosition(lcd,0,0);
 	
+	o=kpProduce(thing_description,SEPA_UPDATE_ADDRESS);
+	if (o!=HTTP_200_OK) {
+		logE("Thing Description insert error in %s\n",thingUUID);
+		return EXIT_FAILURE;
+	}
+	
+	alive_pid = fork();
+	if (alive_pid<0) {
+		logE("Fork error in %s\n",thingUUID);
+		return EXIT_FAILURE;
+	}
+	if (!alive_pid) { 
+		father_process();
+	}
+	else {
+		son_process();
+	}
+	
+	
+	
+	return 0;
+}
+
+void son_process() {
+	while (1) {
+		o=kpProduce(thing_description,SEPA_UPDATE_ADDRESS);
+		if (o!=HTTP_200_OK) {
+			logE("Thing Description alive process error in %s\n",thingUUID);
+			return EXIT_FAILURE;
+		}
+		sleep(ALIVE_SECONDS);
+	}
+}
+
+void father_process() {
+	SEPA_subscription_params action_subscription = _initSubscription();
+	int o;
+	
 	sepa_subscriber_init();
 	sepa_subscription_builder(SPARQL_SUBSCRIPTION,NULL,NULL,SEPA_SUBSCRIPTION_ADDRESS,&action_subscription);
 	sepa_setSubscriptionHandlers(actionRequestNotification,NULL,&action_subscription);
 	fprintfSubscriptionParams(stdout,action_subscription);
 	
-kpSubscribe(&action_subscription);	
+	kpSubscribe(&action_subscription);	
 	lcdPuts(lcd,"Init OK");
-	scanf("%d",&inutile);
-	
-	return 0;
+	scanf("%d",&o);
 }

@@ -26,17 +26,22 @@
 	},
     "updates": {
     	"INIT_TD":{
-    		"sparql":"INSERT {?thing rdf:type td:Thing. 
-    			?thing td:hasName ?thingName. 
-    			?thing wot:isDiscoverable ?discoverable. 
-    			?thing dul:hasLocation ?thingLocation.
-			?thing rdf:type ?thingType} 
-    			WHERE {?thingLocation rdf:type dul:PhysicalPlace}",
+    		"sparql":"DELETE { ?thing wot:isDiscoverable ?oldDiscoverable.
+			?thing dul:hasLocation ?oldThingLocation}
+		INSERT { ?thing rdf:type td:Thing.
+			?thing rdf:type ?thingType.
+			?thing td:hasName ?thingName.
+			?thing wot:isDiscoverable 'true'.
+			?thing dul:hasLocation ?newThingLocation}
+		WHERE { OPTIONAL {?thing rdf:type td:Thing.
+				?thing dul:hasLocation ?oldThingLocation.
+				?thing wot:isDiscoverable ?oldDiscoverable.
+				?oldThingLocation rdf:type dul:PhysicalPlace}.
+			?newThingLocation rdf:type dul:PhysicalPlace}",
     		"forcedBindings":{
     			"thing":{"type":"uri","value":""},
     			"thingName":{"type":"literal","value":""},
-    			"discoverable":{"type":"literal","value":""},
-    			"thingLocation":{"type":"uri","value":""},
+    			"newThingLocation":{"type":"uri","value":""},
 			"thingType":{"type":"uri","value":""}
     		}
     	},
