@@ -206,7 +206,7 @@
 		},
 		"GET_ALL_ACTUATORS":{
 			"sparql":"SELECT ?s WHERE { ?s rdf:type saref:Actuator. ?s wot:isDiscoverable \"true\" }"
-		}
+		},
 		"GET_THING_DESCRIPTION":{
 			"sparql":"SELECT ?thingType ?place ?property ?pName ?pStability ?pWrite ?pValueType 
 			?pDataValue ?event ?eName ?eProperty ?action ?aName ?aProtocol ?aProperty 
