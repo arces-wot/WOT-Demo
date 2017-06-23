@@ -21,8 +21,7 @@
 			"dul": "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
 			"ire": "http://w3c.github.io/wot/w3c-wot-td-ire.owl#",
 			"rdfs": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-			"td": "http://w3c.github.io/wot/w3c-wot-td-ontology.owl#",
-			"saref": "http://ontology.tno.nl/saref#"
+			"td": "http://w3c.github.io/wot/w3c-wot-td-ontology.owl#"
 		},
 		"updates": {
 			"INIT_TD": {
@@ -31,7 +30,7 @@
 		INSERT { ?thing rdf:type td:Thing.
 			?thing rdf:type ?thingType.
 			?thing td:hasName ?thingName.
-			?thing wot:isDiscoverable 'true'.
+			?thing wot:isDiscoverable 'true' . 
 			?thing dul:hasLocation ?newThingLocation}
 		WHERE { OPTIONAL {?thing rdf:type td:Thing.
 				?thing dul:hasLocation ?oldThingLocation.
@@ -308,13 +307,7 @@
 		},
 		"subscribes": {
 			"GET_ALL_THINGS": {
-				"sparql": "SELECT ?s ?t WHERE { ?s rdf:type td:Thing. ?s rdf:type ?t. ?s wot:isDiscoverable \"true\" }"
-			},
-			"GET_ALL_SENSORS": {
-				"sparql": "SELECT ?s WHERE { ?s rdf:type saref:Sensor. ?s wot:isDiscoverable \"true\" }"
-			},
-			"GET_ALL_ACTUATORS": {
-				"sparql": "SELECT ?s WHERE { ?s rdf:type saref:Actuator. ?s wot:isDiscoverable \"true\" }"
+				"sparql": "SELECT ?s WHERE { ?s rdf:type wot:Thing . ?s wot:isDiscoverable \"true\" }"
 			},
 			"GET_THING_DESCRIPTION": {
 				"sparql": "SELECT ?thingType ?place ?property ?pName ?pStability ?pWrite ?pValueType 
