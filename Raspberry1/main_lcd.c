@@ -44,10 +44,20 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #define DATA_BITS		4
 #define ALIVE_SECONDS	10
 
-#define THING_UUID			"wot:Raspberry1"
-#define THING_NAME          "Raspi16x2LCD"
-#define LOCATION_UUID		"wot:MyLocation"
+#define THING_UUID			    "wot:Raspberry1"
+#define THING_NAME              "Raspi16x2LCD"
+#define LOCATION_UUID		    "wot:MyLocation"
+#define LCD_HEART               "wot:LCDHeartBeatEvent"
+#define LCD_HEART_NAME          "Raspi16x2LCDAlive"
+#define LCD_HEART_INSTANCE      "wot:LCDHeartBeatEventInstance%u"
+#define LCD_WRITEACTION         "wot:LCDWriteAction"
+#define LCD_WRITEACTION_NAME    "Raspi16x2LCD_Write"
 
+#define PREFIX_WOT              "PREFIX wot:<http://www.arces.unibo.it/wot#> "
+#define PREFIX_RDF              "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+#define PREFIX_TD               "PREFIX td:<http://w3c.github.io/wot/w3c-wot-td-ontology.owl#> "
+#define PREFIX_DUL              "PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> "
+#define PREFIX_SAREF            "PREFIX saref:<http://ontology.tno.nl/saref#> "
 #define SEPA_SUBSCRIPTION_ADDRESS			"ws://wot.arces.unibo.it:9000/subscribe"
 #define SEPA_UPDATE_ADDRESS					"http://wot.arces.unibo.it:8000/sparql"
 
@@ -64,7 +74,7 @@ void actionRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,
 				lcdPuts(lcd,"                               ");
 				lcdPosition(lcd,0,0);
 				lcdPuts(lcd,added[i].value);
-}
+            }
 		}
 		fprintfSepaNodes(stdout,added,addedlen,"value");
 		freeSepaNodes(added,addedlen);
@@ -79,12 +89,17 @@ void actionRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,
 
 int main(int argc, char **argv) {
 	int o;
+	char lcdHBInstance[50] = "";
+	char HBEventUpdate[1000] = "";
+	unsigned int count = 0;
+	SEPA_subscription_params action_subscription = _initSubscription();
+
+
 	printf("*\n* WOT Demo: 16x2 LCD screed actuator \n");
 	printf("* WOT Team (ARCES University of Bologna) - francesco.antoniazzi@unibo.it\n");
 	printf("\nUSAGE: ./main_lcd [sepa subscription address]\nPress Ctrl-C to exit\n\n");
 
-	sprintf(thing_description,THING_DESCRIPTION,thingUUID,thingUUID,thingUUID,thingUUID,location,thingUUID,location);
-
+    //LCD initialization
 	wiringPiSetup();
 	lcd = lcdInit(ROW_NUMBER,COL_NUMBER,DATA_BITS,
 			LCD_RS,LCD_E,LCD_D4,LCD_D5,LCD_D6,LCD_D7,
@@ -93,39 +108,54 @@ int main(int argc, char **argv) {
 
 	// insert thing description
 	o=kpProduce(
-             "PREFIX wot:<http://www.arces.unibo.it/wot#> PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX td:<http://w3c.github.io/wot/w3c-wot-td-ontology.owl#> PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> PREFIX saref:<http://ontology.tno.nl/saref#> DELETE {" THING_UUID " wot:isDiscoverable ?oldDiscoverable. " THING_UUID " dul:hasLocation ?oldThingLocation} INSERT {" THING_UUID " rdf:type td:Thing. " THING_UUID " rdf:type ?thingType. " THING_UUID " td:hasName '" THING_NAME "'. " THING_UUID " wot:isDiscoverable 'true'. " THING_UUID " dul:hasLocation ?newThingLocation} WHERE {OPTIONAL{" THING_UUID " rdf:type td:Thing. " THING_UUID " dul:hasLocation ?oldThingLocation. " THING_UUID " wot:isDiscoverable ?oldDiscoverable. ?oldThingLocation rdf:type dul:PhysicalPlace}. ?newThingLocation rdf:type dul:PhysicalPlace}"
-             ,SEPA_UPDATE_ADDRESS
-    );
+             PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD PREFIX_SAREF "DELETE {" THING_UUID " wot:isDiscoverable ?oldDiscoverable. " THING_UUID " dul:hasLocation ?oldThingLocation} INSERT {" THING_UUID " rdf:type td:Thing. " THING_UUID " rdf:type ?thingType. " THING_UUID " td:hasName '" THING_NAME "'. " THING_UUID " wot:isDiscoverable 'true'. " THING_UUID " dul:hasLocation ?newThingLocation} WHERE {OPTIONAL{" THING_UUID " rdf:type td:Thing. " THING_UUID " dul:hasLocation ?oldThingLocation. " THING_UUID " wot:isDiscoverable ?oldDiscoverable. ?oldThingLocation rdf:type dul:PhysicalPlace}. ?newThingLocation rdf:type dul:PhysicalPlace}"
+             ,SEPA_UPDATE_ADDRESS);
+    if (o!=HTTP_200_OK) {
+        logE("Thing Description insert update error in " THING_UUID "\n");
+        return EXIT_FAILURE;
+    }
+    // declare Action LCDWrite
+    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD PREFIX_SAREF "INSERT { " THING_UUID " td:hasAction " LCD_WRITEACTION ". " LCD_WRITEACTION " rdf:type td:Action. " LCD_WRITEACTION " td:hasName '" LCD_WRITEACTION_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
+                ,SEPA_UPDATE_ADDRESS);
+    if (o!=HTTP_200_OK) {
+        logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
+        return EXIT_FAILURE;
+    }
 
+    // declare Event HeartBeat
+     o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD PREFIX_SAREF "INSERT { " THING_UUID " td:hasEvent " LCD_HEART ". " LCD_HEART " rdf:type td:Event. " LCD_HEART " td:hasName " LCD_HEART_NAME "} WHERE { " THING_UUID " rdf:type td:Thing}"
+                ,SEPA_UPDATE_ADDRESS);
+     if (o!=HTTP_200_OK) {
+         logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
+         return EXIT_FAILURE;
+     }
+
+    // subscribe to LCDWrite action requests
+    sepa_subscriber_init();
+    sepa_subscription_builder(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD PREFIX_SAREF "SELECT ?instance ?input ?value WHERE { " LCD_WRITEACTION " rdf:type td:Action. " LCD_WRITEACTION " wot:hasInstance ?instance. ?instance rdf:type wot:ActionInstance. OPTIONAL {?instance td:hasInput ?input. ?input dul:hasDataValue ?value}}"
+              ,NULL,NULL,
+              SEPA_SUBSCRIPTION_ADDRESS,
+              &action_subscription);
+    sepa_setSubscriptionHandlers(actionRequestNotification,NULL,&action_subscription);
+    fprintfSubscriptionParams(stdout,action_subscription);
+    kpSubscribe(&action_subscription);
+    lcdPuts(lcd,"Init OK");
+
+    // HeartBeat continuous loop
     while (1) {
+        sprintf(lcdHBInstance,LCD_HEART_INSTANCE,count);
+        sprintf(HBEventUpdate,
+                PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD PREFIX_SAREF "DELETE { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT { " LCD_HEART " wot:hasInstance %s. %s rdf:type wot:EventInstance. %s wot:hasTimeStamp ?time} WHERE {BIND(now() AS ?time) . " LCD_HEART " rdf:type td:Event. OPTIONAL { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",
+                lcdHBInstance,lcdHBInstance,lcdHBInstance);
 
+        o=kpProduce(HBEventUpdate,SEPA_UPDATE_ADDRESS);
+        if (o!=HTTP_200_OK) {
+            logE("Thing Description heartbeat update error in " THING_UUID "\n");
+            return EXIT_FAILURE;
+        }
+        count++;
         sleep(ALIVE_SECONDS);
     }
 
-	return 0;
-}
-
-void son_process() {
-	while (1) {
-		o=kpProduce(thing_description,SEPA_UPDATE_ADDRESS);
-		if (o!=HTTP_200_OK) {
-			logE("Thing Description alive process error in %s\n",thingUUID);
-			return EXIT_FAILURE;
-		}
-		sleep(ALIVE_SECONDS);
-	}
-}
-
-void father_process() {
-	SEPA_subscription_params action_subscription = _initSubscription();
-	int o;
-
-	sepa_subscriber_init();
-	sepa_subscription_builder(SPARQL_SUBSCRIPTION,NULL,NULL,SEPA_SUBSCRIPTION_ADDRESS,&action_subscription);
-	sepa_setSubscriptionHandlers(actionRequestNotification,NULL,&action_subscription);
-	fprintfSubscriptionParams(stdout,action_subscription);
-
-	kpSubscribe(&action_subscription);
-	lcdPuts(lcd,"Init OK");
-	scanf("%d",&o);
+	return EXIT_FAILURE;
 }
