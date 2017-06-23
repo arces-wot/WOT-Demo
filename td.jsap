@@ -31,7 +31,7 @@
 		INSERT { ?thing rdf:type td:Thing.
 			?thing rdf:type ?thingType.
 			?thing td:hasName ?thingName.
-			?thing wot:isDiscoverable 'true'.
+			?thing wot:isDiscoverable \"true\".
 			?thing dul:hasLocation ?newThingLocation}
 		WHERE { OPTIONAL {?thing rdf:type td:Thing.
 				?thing dul:hasLocation ?oldThingLocation.
