@@ -172,5 +172,5 @@ int main(int argc, char **argv) {
     kpUnsubscribe(&action_subscription);
     sepa_subscriber_destroy();
 
-	return EXIT_FAILURE;
+	return EXIT_SUCCESS;
 }

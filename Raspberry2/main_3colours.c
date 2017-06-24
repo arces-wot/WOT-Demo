@@ -28,22 +28,17 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
  */
 
 #include <wiringPi.h>
-#include <lcd.h>
+#include <fcntl.h>
 #include <unistd.h>
+#include <signal.h>
+#include <math.h>
 #include "../../sepa-C-kpi/sepa_aggregator.h"
 
 #define SEPA_LOGGER_ERROR
-//USE WIRINGPI PIN NUMBERS
-#define LCD_RS  25               //Register select pin
-#define LCD_E   24               //Enable Pin
-#define LCD_D4  23               //Data pin 4
-#define LCD_D5  22               //Data pin 5
-#define LCD_D6  21               //Data pin 6
-#define LCD_D7  14               //Data pin 7
-#define ROW_NUMBER		2
-#define COL_NUMBER		16
-#define MAX_LENGHT		32		// 16*2
-#define DATA_BITS		4
+//USE WIRINGPI PIN NUMBERS --> see https://it.pinout.xyz/pinout/wiringpi
+#define R_PIN   0
+#define G_PIN   2
+#define B_PIN   3
 #define ALIVE_SECONDS	10
 
 #define THING_UUID			    "wot:Raspberry2"
@@ -64,13 +59,46 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #define SEPA_SUBSCRIPTION_ADDRESS			"ws://192.168.1.146:9000/subscribe"
 #define SEPA_UPDATE_ADDRESS					"http://192.168.1.146:8000/update"
 
+volatile sig_atomic_t alive = 1;
+int pipeFD[2];
+
+struct rgbf {
+    int r,g,b,f;
+};
+
+void INThandler(int sig) {
+    signal(sig, SIG_IGN);
+    alive = 0;
+    signal(SIGINT, SIG_DFL);
+}
+
+void blink_process() {
+    struct rgbf input;
+    while (1) {
+        read()
+        digitalWrite(R_PIN,input.r);
+        digitalWrite(R_PIN,input.g);
+        digitalWrite(R_PIN,input.b);
+        usleep(lround(1000/input.f));
+    }
+}
+
 void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,int removedlen) {
 	int i;
 	if (added!=NULL) {
 		if (addedlen>1) printf("%d new requested detected.\n On the screen only the last will be shown.\n",addedlen);
 		else printf("New request detected!\n!");
 		for (i=0; i<addedlen; i++) {
-			if (!strcmp(added[i].bindingName,"value")) {
+			if ((!strcmp(added[i].bindingName,"value")) && (strlen(added[i].value)==3)) {
+                // R
+                if ((added[i].value)[0]=='0')
+                else ;
+                // G
+                if ((added[i].value)[1]=='0')
+                else ;
+                // B
+                if ((added[i].value)[2]=='0')
+                else ;
             }
 		}
 		fprintfSepaNodes(stdout,added,addedlen,"value");
@@ -105,7 +133,7 @@ void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode *
 }
 
 int main(int argc, char **argv) {
-	int o;
+	int o,blink_pid;
 	char lcdHBInstance[50] = "";
 	char HBEventUpdate[1000] = "";
 	unsigned int count = 0;
@@ -116,6 +144,10 @@ int main(int argc, char **argv) {
 	printf("* WOT Team (ARCES University of Bologna) - francesco.antoniazzi@unibo.it\n");
 	printf("\n\nPress Ctrl-C to exit\n\n");
 
+    wiringPiSetup();
+    pinMode(R_PIN,OUTPUT);
+    pinMode(G_PIN,OUTPUT);
+    pinMode(B_PIN,OUTPUT);
     http_client_init();
 
 	// insert thing description
@@ -126,8 +158,15 @@ int main(int argc, char **argv) {
         logE("Thing Description insert update error in " THING_UUID "\n");
         return EXIT_FAILURE;
     }
-    // declare Action LCDWrite
-    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasAction " LCD_WRITEACTION ". " LCD_WRITEACTION " rdf:type td:Action. " LCD_WRITEACTION " td:hasName '" LCD_WRITEACTION_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
+    // declare Action RGB Colour modifier
+    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasAction " RGB_COLOURACTION ". " RGB_COLOURACTION " rdf:type td:Action. " RGB_COLOURACTION " td:hasName '" RGB_COLOURACTION_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
+                ,SEPA_UPDATE_ADDRESS,NULL);
+    if (o!=HTTP_200_OK) {
+        logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
+        return EXIT_FAILURE;
+    }
+     // declare Action RGB frequency modifier
+    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasAction " RGB_FREQ_ACTION ". " RGB_FREQ_ACTION " rdf:type td:Action. " RGB_FREQ_ACTION " td:hasName '" RGB_FREQ_ACTION_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
                 ,SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
         logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
@@ -135,26 +174,56 @@ int main(int argc, char **argv) {
     }
 
     // declare Event HeartBeat
-     o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasEvent " LCD_HEART ". " LCD_HEART " rdf:type td:Event. " LCD_HEART " td:hasName '" LCD_HEART_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
+     o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasEvent " RGB_HEART ". " RGB_HEART " rdf:type td:Event. " RGB_HEART " td:hasName '" RGB_HEART_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
                 ,SEPA_UPDATE_ADDRESS,NULL);
      if (o!=HTTP_200_OK) {
          logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
          return EXIT_FAILURE;
      }
 
-    // subscribe to LCDWrite action requests
+    // creation of blink process, communicating with
+    if (pipe2(pipeFD,O_NONBLOCK)) {
+        perror("Pipe creation error - ");
+        return EXIT_FAILURE;
+    }
+    blink_pid = fork();
+    if (!blink_pid) {
+        // child process
+        close(pipeFD[1]);
+        blink_process();
+        return EXIT_SUCCESS;
+    }
+    // father process
+    if (blink_pid<0) {
+        fprintf(stderr,"Fork error in generating blink process\n");
+        return EXIT_FAILURE;
+    }
+    close(pipeFD[0]);
+
+    // declaration of subscriptions
     sepa_subscriber_init();
-    sepa_subscription_builder(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "SELECT ?instance ?input ?value WHERE { " LCD_WRITEACTION " rdf:type td:Action. " LCD_WRITEACTION " wot:hasInstance ?instance. ?instance rdf:type wot:ActionInstance. OPTIONAL {?instance td:hasInput ?input. ?input dul:hasDataValue ?value}}"
+    // subscribe to RGB Colour action requests
+    sepa_subscription_builder(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "SELECT ?instance ?input ?value WHERE { " RGB_COLOURACTION " rdf:type td:Action. " RGB_COLOURACTION " wot:hasInstance ?instance. ?instance rdf:type wot:ActionInstance. OPTIONAL {?instance td:hasInput ?input. ?input dul:hasDataValue ?value}}"
               ,NULL,NULL,
               SEPA_SUBSCRIPTION_ADDRESS,
-              &action_subscription);
-    sepa_setSubscriptionHandlers(actionRequestNotification,NULL,&action_subscription);
-    fprintfSubscriptionParams(stdout,action_subscription);
-    kpSubscribe(&action_subscription);
-    lcdPuts(lcd,"Init OK");
+              &colour_action_subscription);
+    sepa_setSubscriptionHandlers(changeColorRequestNotification,NULL,&colour_action_subscription);
+    fprintfSubscriptionParams(stdout,colour_action_subscription);
+    kpSubscribe(&colour_action_subscription);
 
+    // subscribe to RGB Frequency action requests
+    sepa_subscription_builder(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "SELECT ?instance ?input ?value WHERE { " RGB_FREQ_ACTION " rdf:type td:Action. " RGB_FREQ_ACTION " wot:hasInstance ?instance. ?instance rdf:type wot:ActionInstance. OPTIONAL {?instance td:hasInput ?input. ?input dul:hasDataValue ?value}}"
+              ,NULL,NULL,
+              SEPA_SUBSCRIPTION_ADDRESS,
+              &freq_action_subscription);
+    sepa_setSubscriptionHandlers(changeColorRequestNotification,NULL,&freq_action_subscription);
+    fprintfSubscriptionParams(stdout,freq_action_subscription);
+    kpSubscribe(&freq_action_subscription);
+
+
+    signal(SIGINT, INThandler);
     // HeartBeat continuous loop
-    while (1) {
+    while (alive) {
         sprintf(lcdHBInstance,"wot:3ColourHeartBeatEventInstance%u",count);
         sprintf(HBEventUpdate,
                 PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT { " LCD_HEART " wot:hasInstance %s. %s rdf:type wot:EventInstance. %s wot:hasTimeStamp ?time} WHERE {BIND(now() AS ?time) . " LCD_HEART " rdf:type td:Event. OPTIONAL { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",
@@ -166,8 +235,14 @@ int main(int argc, char **argv) {
             return EXIT_FAILURE;
         }
         count++;
-        sleep(ALIVE_SECONDS);
+        if (alive) sleep(ALIVE_SECONDS);
     }
+
+    http_client_free();
+    kpUnsubscribe(&colour_action_subscription);
+    kpUnsubscribe(&freq_action_subscription);
+    kill(blink_pid,SIGKILL);
+    sepa_subscriber_destroy();
 
 	return EXIT_FAILURE;
 }
