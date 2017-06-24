@@ -49,10 +49,6 @@
 					"newThingLocation": {
 						"type": "uri",
 						"value": ""
-					},
-					"thingType": {
-						"type": "uri",
-						"value": ""
 					}
 				}
 			},

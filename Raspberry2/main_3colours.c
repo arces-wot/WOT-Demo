@@ -20,7 +20,7 @@
  *
  *
  * This code is made for the W3C Web Of Things Plugfest in Dusseldorf (July 2017)
- * 14 june 2017
+ * 24 june 2017
  *
 gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_consumer.c
 ../../../sepa-C-kpi/sepa_secure.c ../../../sepa-C-kpi/jsmn.c -o main_lcd -pthread -lcurl
@@ -30,7 +30,6 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #include <wiringPi.h>
 #include <lcd.h>
 #include <unistd.h>
-#include <signal.h>
 #include "../../sepa-C-kpi/sepa_aggregator.h"
 
 #define SEPA_LOGGER_ERROR
@@ -47,13 +46,16 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #define DATA_BITS		4
 #define ALIVE_SECONDS	10
 
-#define THING_UUID			    "wot:Raspberry1"
-#define THING_NAME              "Raspi16x2LCD"
+#define THING_UUID			    "wot:Raspberry2"
+#define THING_NAME              "Raspi3ColourLed"
 #define LOCATION_UUID		    "wot:MyLocation"
-#define LCD_HEART               "wot:LCDHeartBeatEvent"
-#define LCD_HEART_NAME          "Raspi16x2LCDAlive"
-#define LCD_WRITEACTION         "wot:LCDWriteAction"
-#define LCD_WRITEACTION_NAME    "Raspi16x2LCD_Write"
+#define RGB_HEART               "wot:3ColourHeartBeatEvent"
+#define RGB_HEART_NAME          "Raspi3ColourAlive"
+#define RGB_COLOURACTION        "wot:ChangeColourAction"
+#define RGB_COLOURACTION_NAME   "ChangeRGBLedColour"
+#define RGB_FREQ_ACTION         "wot:ChangeFrequencyAction"
+#define RGB_FREQ_ACTION_NAME    "ChangeRGBBlinkFrequency"
+
 
 #define PREFIX_WOT              "PREFIX wot:<http://www.arces.unibo.it/wot#> "
 #define PREFIX_RDF              "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
@@ -62,26 +64,33 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #define SEPA_SUBSCRIPTION_ADDRESS			"ws://192.168.1.146:9000/subscribe"
 #define SEPA_UPDATE_ADDRESS					"http://192.168.1.146:8000/update"
 
-int lcd;
-volatile sig_atomic_t alive = 1;
-
-void INThandler(int sig) {
-    signal(sig, SIG_IGN);
-    alive = 0;
-    signal(SIGINT, SIG_DFL);
-}
-
-void actionRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,int removedlen) {
+void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,int removedlen) {
 	int i;
 	if (added!=NULL) {
 		if (addedlen>1) printf("%d new requested detected.\n On the screen only the last will be shown.\n",addedlen);
 		else printf("New request detected!\n!");
 		for (i=0; i<addedlen; i++) {
 			if (!strcmp(added[i].bindingName,"value")) {
-				lcdPosition(lcd,0,0);
-				lcdPuts(lcd,"                               ");
-				lcdPosition(lcd,0,0);
-				lcdPuts(lcd,added[i].value);
+            }
+		}
+		fprintfSepaNodes(stdout,added,addedlen,"value");
+		freeSepaNodes(added,addedlen);
+	}
+	if (removed!=NULL) {
+		printf("Removed %d items:\n",removedlen);
+		fprintfSepaNodes(stdout,removed,removedlen,"");
+		freeSepaNodes(removed,removedlen);
+	}
+	printf("\n");
+}
+
+void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,int removedlen) {
+	int i;
+	if (added!=NULL) {
+		if (addedlen>1) printf("%d new requested detected.\n On the screen only the last will be shown.\n",addedlen);
+		else printf("New request detected!\n!");
+		for (i=0; i<addedlen; i++) {
+			if (!strcmp(added[i].bindingName,"value")) {
             }
 		}
 		fprintfSepaNodes(stdout,added,addedlen,"value");
@@ -100,20 +109,13 @@ int main(int argc, char **argv) {
 	char lcdHBInstance[50] = "";
 	char HBEventUpdate[1000] = "";
 	unsigned int count = 0;
-	SEPA_subscription_params action_subscription = _initSubscription();
+	SEPA_subscription_params colour_action_subscription = _initSubscription();
+	SEPA_subscription_params freq_action_subscription = _initSubscription();
 
-	printf("*\n* WOT Demo: 16x2 LCD screed actuator \n");
+	printf("*\n* WOT Demo: RGB led blinker\n");
 	printf("* WOT Team (ARCES University of Bologna) - francesco.antoniazzi@unibo.it\n");
 	printf("\n\nPress Ctrl-C to exit\n\n");
 
-    //LCD initialization
-	wiringPiSetup();
-	lcd = lcdInit(ROW_NUMBER,COL_NUMBER,DATA_BITS,
-			LCD_RS,LCD_E,LCD_D4,LCD_D5,LCD_D6,LCD_D7,
-			0,0,0,0);
-	lcdPosition(lcd,0,0);
-
-    // As more than one curl request will be done by this process, by calling this function we inhibit continuous memory allocation and deallocation by curl libraries.
     http_client_init();
 
 	// insert thing description
@@ -151,10 +153,9 @@ int main(int argc, char **argv) {
     kpSubscribe(&action_subscription);
     lcdPuts(lcd,"Init OK");
 
-    signal(SIGINT, INThandler);
     // HeartBeat continuous loop
-    while (alive) {
-        sprintf(lcdHBInstance,"wot:LCDHeartBeatEventInstance%u",count);
+    while (1) {
+        sprintf(lcdHBInstance,"wot:3ColourHeartBeatEventInstance%u",count);
         sprintf(HBEventUpdate,
                 PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT { " LCD_HEART " wot:hasInstance %s. %s rdf:type wot:EventInstance. %s wot:hasTimeStamp ?time} WHERE {BIND(now() AS ?time) . " LCD_HEART " rdf:type td:Event. OPTIONAL { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",
                 lcdHBInstance,lcdHBInstance,lcdHBInstance);
@@ -165,12 +166,8 @@ int main(int argc, char **argv) {
             return EXIT_FAILURE;
         }
         count++;
-        if (alive) sleep(ALIVE_SECONDS);
+        sleep(ALIVE_SECONDS);
     }
-
-    http_client_free();
-    kpUnsubscribe(&action_subscription);
-    sepa_subscriber_destroy();
 
 	return EXIT_FAILURE;
 }
