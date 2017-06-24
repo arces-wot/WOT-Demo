@@ -22,13 +22,15 @@
  * This code is made for the W3C Web Of Things Plugfest in Dusseldorf (July 2017)
  * 14 june 2017
  *
-gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_consumer.c ../../../sepa-C-kpi/sepa_secure.c ../../../sepa-C-kpi/jsmn.c -o main_lcd -pthread -lcurl `pkg-config --cflags --libs glib-2.0 libwebsockets` -lwiringPi -lwiringPiDev
+gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_consumer.c 
+../../../sepa-C-kpi/sepa_secure.c ../../../sepa-C-kpi/jsmn.c -o main_lcd -pthread -lcurl
+`pkg-config --cflags --libs glib-2.0 libwebsockets` -lwiringPi -lwiringPiDev
  */
 
 #include <wiringPi.h>
 #include <lcd.h>
 #include <unistd.h>
-#include "../../../sepa-C-kpi/sepa_aggregator.h"
+#include "../../sepa-C-kpi/sepa_aggregator.h"
 
 #define SEPA_LOGGER_ERROR
 //USE WIRINGPI PIN NUMBERS
@@ -108,14 +110,14 @@ int main(int argc, char **argv) {
 	// insert thing description
 	o=kpProduce(
              PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE {" THING_UUID " wot:isDiscoverable ?oldDiscoverable. " THING_UUID " dul:hasLocation ?oldThingLocation} INSERT {" THING_UUID " rdf:type td:Thing. " THING_UUID " td:hasName '" THING_NAME "'. " THING_UUID " wot:isDiscoverable 'true'. " THING_UUID " dul:hasLocation ?newThingLocation} WHERE {OPTIONAL{" THING_UUID " rdf:type td:Thing. " THING_UUID " dul:hasLocation ?oldThingLocation. " THING_UUID " wot:isDiscoverable ?oldDiscoverable. ?oldThingLocation rdf:type dul:PhysicalPlace}. ?newThingLocation rdf:type dul:PhysicalPlace}"
-             ,SEPA_UPDATE_ADDRESS);
+             ,SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
         logE("Thing Description insert update error in " THING_UUID "\n");
         return EXIT_FAILURE;
     }
     // declare Action LCDWrite
     o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasAction " LCD_WRITEACTION ". " LCD_WRITEACTION " rdf:type td:Action. " LCD_WRITEACTION " td:hasName '" LCD_WRITEACTION_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
-                ,SEPA_UPDATE_ADDRESS);
+                ,SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
         logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
         return EXIT_FAILURE;
@@ -123,7 +125,7 @@ int main(int argc, char **argv) {
 
     // declare Event HeartBeat
      o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasEvent " LCD_HEART ". " LCD_HEART " rdf:type td:Event. " LCD_HEART " td:hasName " LCD_HEART_NAME "} WHERE { " THING_UUID " rdf:type td:Thing}"
-                ,SEPA_UPDATE_ADDRESS);
+                ,SEPA_UPDATE_ADDRESS,NULL);
      if (o!=HTTP_200_OK) {
          logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
          return EXIT_FAILURE;
@@ -147,7 +149,7 @@ int main(int argc, char **argv) {
                 PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT { " LCD_HEART " wot:hasInstance %s. %s rdf:type wot:EventInstance. %s wot:hasTimeStamp ?time} WHERE {BIND(now() AS ?time) . " LCD_HEART " rdf:type td:Event. OPTIONAL { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",
                 lcdHBInstance,lcdHBInstance,lcdHBInstance);
 
-        o=kpProduce(HBEventUpdate,SEPA_UPDATE_ADDRESS);
+        o=kpProduce(HBEventUpdate,SEPA_UPDATE_ADDRESS,NULL);
         if (o!=HTTP_200_OK) {
             logE("Thing Description heartbeat update error in " THING_UUID "\n");
             return EXIT_FAILURE;
