@@ -34,7 +34,7 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #include "../../sepa-C-kpi/sepa_aggregator.h"
 
 #define SEPA_LOGGER_ERROR
-//USE WIRINGPI PIN NUMBERS
+//USE WIRINGPI PIN NUMBERS --> see https://it.pinout.xyz/pinout/wiringpi
 #define LCD_RS  25               //Register select pin
 #define LCD_E   24               //Enable Pin
 #define LCD_D4  23               //Data pin 4
