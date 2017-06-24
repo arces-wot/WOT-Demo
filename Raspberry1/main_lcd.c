@@ -59,8 +59,8 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #define PREFIX_RDF              "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
 #define PREFIX_TD               "PREFIX td:<http://w3c.github.io/wot/w3c-wot-td-ontology.owl#> "
 #define PREFIX_DUL              "PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> "
-#define SEPA_SUBSCRIPTION_ADDRESS			"ws://wot.arces.unibo.it:9000/subscribe"
-#define SEPA_UPDATE_ADDRESS					"http://wot.arces.unibo.it:8000/sparql"
+#define SEPA_SUBSCRIPTION_ADDRESS			"ws://192.168.1.146:9000/subscribe"
+#define SEPA_UPDATE_ADDRESS					"http://192.168.1.146:8000/update"
 
 int lcd;
 
@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
 
 	printf("*\n* WOT Demo: 16x2 LCD screed actuator \n");
 	printf("* WOT Team (ARCES University of Bologna) - francesco.antoniazzi@unibo.it\n");
-	printf("\nUSAGE: ./main_lcd [sepa subscription address]\nPress Ctrl-C to exit\n\n");
+	printf("\n\nPress Ctrl-C to exit\n\n");
 
     //LCD initialization
 	wiringPiSetup();
@@ -124,7 +124,7 @@ int main(int argc, char **argv) {
     }
 
     // declare Event HeartBeat
-     o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasEvent " LCD_HEART ". " LCD_HEART " rdf:type td:Event. " LCD_HEART " td:hasName " LCD_HEART_NAME "} WHERE { " THING_UUID " rdf:type td:Thing}"
+     o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasEvent " LCD_HEART ". " LCD_HEART " rdf:type td:Event. " LCD_HEART " td:hasName '" LCD_HEART_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
                 ,SEPA_UPDATE_ADDRESS,NULL);
      if (o!=HTTP_200_OK) {
          logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
