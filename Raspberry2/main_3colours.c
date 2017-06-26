@@ -50,6 +50,12 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #define RGB_COLOURACTION_NAME   "ChangeRGBLedColour"
 #define RGB_FREQ_ACTION         "wot:ChangeFrequencyAction"
 #define RGB_FREQ_ACTION_NAME    "ChangeRGBBlinkFrequency"
+#define RGB_COLOUR_PROPERTY_UUID	"wot:RGBcolourProperty"
+#define RGB_COLOUR_PROPERTY_NAME	"Raspi3ColourProperty"
+#define RGB_COLOUR_VALUETYPE		"wot:RGB_colour_JSON"
+#define RGB_FREQ_PROPERTY_UUID	"wot:RGBfreqProperty"
+#define RGB_FREQ_PROPERTY_NAME	"Raspi3FreqProperty"
+#define RGB_FREQ_VALUETYPE		"wot:RGB_freq_JSON"
 
 
 #define PREFIX_WOT              "PREFIX wot:<http://www.arces.unibo.it/wot#> "
@@ -62,9 +68,9 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 volatile sig_atomic_t alive = 1;
 int pipeFD[2];
 
-struct rgbf {
+typedef struct rgbf {
     int r,g,b,f;
-};
+} rgbf;
 
 void INThandler(int sig) {
     signal(sig, SIG_IGN);
@@ -73,7 +79,7 @@ void INThandler(int sig) {
 }
 
 void blink_process() {
-    struct rgbf input;
+    rgbf input;
     while (1) {
         read()
         digitalWrite(R_PIN,input.r);
@@ -109,6 +115,7 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 		fprintfSepaNodes(stdout,removed,removedlen,"");
 		freeSepaNodes(removed,removedlen);
 	}
+	// TODO update value!
 	printf("\n");
 }
 
@@ -130,6 +137,7 @@ void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode *
 		freeSepaNodes(removed,removedlen);
 	}
 	printf("\n");
+	// TODO update value!
 }
 
 int main(int argc, char **argv) {
@@ -174,12 +182,28 @@ int main(int argc, char **argv) {
     }
 
     // declare Event HeartBeat
-     o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasEvent " RGB_HEART ". " RGB_HEART " rdf:type td:Event. " RGB_HEART " td:hasName '" RGB_HEART_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
-                ,SEPA_UPDATE_ADDRESS,NULL);
-     if (o!=HTTP_200_OK) {
-         logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
-         return EXIT_FAILURE;
-     }
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasEvent " RGB_HEART ". " RGB_HEART " rdf:type td:Event. " RGB_HEART " td:hasName '" RGB_HEART_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
+				,SEPA_UPDATE_ADDRESS,NULL);
+	if (o!=HTTP_200_OK) {
+		logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
+		return EXIT_FAILURE;
+	}
+
+	// declare Property color
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasProperty " RGB_COLOUR_PROPERTY_UUID ". " RGB_COLOUR_PROPERTY_UUID " rdf:type td:Property. " RGB_COLOUR_PROPERTY_UUID " td:hasName " RGB_COLOUR_PROPERTY_NAME ". " RGB_COLOUR_PROPERTY_UUID " td:hasStability '-1'. " RGB_COLOUR_PROPERTY_UUID " td:isWritable 'true'. " RGB_COLOUR_PROPERTY_UUID " td:hasValueType " RGB_COLOUR_VALUETYPE ". " RGB_COLOUR_VALUETYPE " dul:hasDataValue '{\"r\":0,\"g\":0,\"b\":0}' }WHERE {" THING_UUID " rdf:type td:Thing}"
+				,SEPA_UPDATE_ADDRESS,NULL);
+	if (o!=HTTP_200_OK) {
+		logE("Thing Description " RGB_COLOUR_PROPERTY_UUID " insert error\n");
+		return EXIT_FAILURE;
+	}
+	
+	// declare Property frequency
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasProperty " RGB_FREQ_PROPERTY_UUID ". " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property. " RGB_FREQ_PROPERTY_UUID " td:hasName " RGB_FREQ_PROPERTY_NAME ". " RGB_FREQ_PROPERTY_UUID " td:hasStability '-1'. " RGB_FREQ_PROPERTY_UUID " td:isWritable 'true'. " RGB_FREQ_PROPERTY_UUID " td:hasValueType " RGB_FREQ_VALUETYPE ". " RGB_FREQ_VALUETYPE " dul:hasDataValue '{\"frequency\":0}' }WHERE {" THING_UUID " rdf:type td:Thing}"
+				,SEPA_UPDATE_ADDRESS,NULL);
+	if (o!=HTTP_200_OK) {
+		logE("Thing Description " RGB_FREQ_PROPERTY_UUID " insert error\n");
+		return EXIT_FAILURE;
+	}
 
     // creation of blink process, communicating with
     if (pipe2(pipeFD,O_NONBLOCK)) {
