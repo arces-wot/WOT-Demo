@@ -242,7 +242,7 @@ int main(int argc, char **argv) {
     if (!blink_pid) {
         // child process
         close(pipeFD[1]);
-        signal(SIGUSR1,blinkHandler);
+        signal(SIGUSR1,BlinkHandler);
         blink_process();
         return EXIT_SUCCESS;
     }
@@ -279,7 +279,7 @@ int main(int argc, char **argv) {
     while (alive) {
         sprintf(lcdHBInstance,"wot:3ColourHeartBeatEventInstance%u",count);
         sprintf(HBEventUpdate,
-                PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT { " LCD_HEART " wot:hasInstance %s. %s rdf:type wot:EventInstance. %s wot:hasTimeStamp ?time} WHERE {BIND(now() AS ?time) . " LCD_HEART " rdf:type td:Event. OPTIONAL { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",
+                PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT { " RGB_HEART " wot:hasInstance %s. %s rdf:type wot:EventInstance. %s wot:hasTimeStamp ?time} WHERE {BIND(now() AS ?time) . " RGB_HEART " rdf:type td:Event. OPTIONAL { " RGB_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",
                 lcdHBInstance,lcdHBInstance,lcdHBInstance);
 
         o=kpProduce(HBEventUpdate,SEPA_UPDATE_ADDRESS,NULL);
