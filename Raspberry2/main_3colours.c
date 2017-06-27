@@ -198,14 +198,14 @@ int main(int argc, char **argv) {
     o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasAction " RGB_COLOURACTION ". " RGB_COLOURACTION " rdf:type td:Action. " RGB_COLOURACTION " td:hasName '" RGB_COLOURACTION_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
                 ,SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
-        logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
+        logE("Action " RGB_COLOURACTION_NAME " insert error\n");
         return EXIT_FAILURE;
     }
      // declare Action RGB frequency modifier
     o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasAction " RGB_FREQ_ACTION ". " RGB_FREQ_ACTION " rdf:type td:Action. " RGB_FREQ_ACTION " td:hasName '" RGB_FREQ_ACTION_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
                 ,SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
-        logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
+        logE("Action " RGB_FREQ_ACTION_NAME " insert error\n");
         return EXIT_FAILURE;
     }
 
@@ -213,23 +213,23 @@ int main(int argc, char **argv) {
 	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasEvent " RGB_HEART ". " RGB_HEART " rdf:type td:Event. " RGB_HEART " td:hasName '" RGB_HEART_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
 				,SEPA_UPDATE_ADDRESS,NULL);
 	if (o!=HTTP_200_OK) {
-		logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
+		logE("Event " RGB_HEART_NAME " insert error\n");
 		return EXIT_FAILURE;
 	}
 
 	// declare Property color
-	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasProperty " RGB_COLOUR_PROPERTY_UUID ". " RGB_COLOUR_PROPERTY_UUID " rdf:type td:Property. " RGB_COLOUR_PROPERTY_UUID " td:hasName " RGB_COLOUR_PROPERTY_NAME ". " RGB_COLOUR_PROPERTY_UUID " td:hasStability '-1'. " RGB_COLOUR_PROPERTY_UUID " td:isWritable 'true'. " RGB_COLOUR_PROPERTY_UUID " td:hasValueType " RGB_COLOUR_VALUETYPE ". " RGB_COLOUR_VALUETYPE " dul:hasDataValue '{\"r\":0,\"g\":0,\"b\":0}' }WHERE {" THING_UUID " rdf:type td:Thing}"
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasProperty " RGB_COLOUR_PROPERTY_UUID ". " RGB_COLOUR_PROPERTY_UUID " rdf:type td:Property. " RGB_COLOUR_PROPERTY_UUID " td:hasName '" RGB_COLOUR_PROPERTY_NAME "'. " RGB_COLOUR_PROPERTY_UUID " td:hasStability '-1'. " RGB_COLOUR_PROPERTY_UUID " td:isWritable 'true'. " RGB_COLOUR_PROPERTY_UUID " td:hasValueType " RGB_COLOUR_VALUETYPE ". " RGB_COLOUR_VALUETYPE " dul:hasDataValue '{\"r\":0,\"g\":0,\"b\":0}' }WHERE {" THING_UUID " rdf:type td:Thing}"
 				,SEPA_UPDATE_ADDRESS,NULL);
 	if (o!=HTTP_200_OK) {
-		logE("Thing Description " RGB_COLOUR_PROPERTY_UUID " insert error\n");
+		logE("Property " RGB_COLOUR_PROPERTY_NAME " insert error\n");
 		return EXIT_FAILURE;
 	}
 	
 	// declare Property frequency
-	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasProperty " RGB_FREQ_PROPERTY_UUID ". " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property. " RGB_FREQ_PROPERTY_UUID " td:hasName " RGB_FREQ_PROPERTY_NAME ". " RGB_FREQ_PROPERTY_UUID " td:hasStability '-1'. " RGB_FREQ_PROPERTY_UUID " td:isWritable 'true'. " RGB_FREQ_PROPERTY_UUID " td:hasValueType " RGB_FREQ_VALUETYPE ". " RGB_FREQ_VALUETYPE " dul:hasDataValue '{\"frequency\":0}' }WHERE {" THING_UUID " rdf:type td:Thing}"
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasProperty " RGB_FREQ_PROPERTY_UUID ". " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property. " RGB_FREQ_PROPERTY_UUID " td:hasName '" RGB_FREQ_PROPERTY_NAME "'. " RGB_FREQ_PROPERTY_UUID " td:hasStability '-1'. " RGB_FREQ_PROPERTY_UUID " td:isWritable 'true'. " RGB_FREQ_PROPERTY_UUID " td:hasValueType " RGB_FREQ_VALUETYPE ". " RGB_FREQ_VALUETYPE " dul:hasDataValue '{\"frequency\":0}' }WHERE {" THING_UUID " rdf:type td:Thing}"
 				,SEPA_UPDATE_ADDRESS,NULL);
 	if (o!=HTTP_200_OK) {
-		logE("Thing Description " RGB_FREQ_PROPERTY_UUID " insert error\n");
+		logE("Thing Description " RGB_FREQ_PROPERTY_NAME " insert error\n");
 		return EXIT_FAILURE;
 	}
 
