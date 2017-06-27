@@ -96,7 +96,7 @@ void blink_process() {
 			if (new.b!=-1) input.b=new.b;
 			if (new.f!=-1) input.f=new.f;
 		}
-		else new={.r=-1,.g=-1,.b=-1,.f=-1};
+		else new = (rgbf) {.r=-1,.g=-1,.b=-1,.f=-1};
 		if (input.f) {
 			digitalWrite(R_PIN,input.r);
 			digitalWrite(R_PIN,input.g);
@@ -112,7 +112,7 @@ void blink_process() {
 }
 
 void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,int removedlen) {
-	int i;
+	int i,o;
 	char updateSPARQL[500];
 	rgbf newColour = {.r=-1,.g=-1,.b=-1,.f=-1};
 	if (added!=NULL) {
@@ -142,7 +142,7 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 }
 
 void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,int removedlen) {
-	int i;
+	int i,o;
 	char updateSPARQL[500];
 	rgbf newFrequency = {.r=-1,.g=-1,.b=-1,.f=-1};
 	if (added!=NULL) {
