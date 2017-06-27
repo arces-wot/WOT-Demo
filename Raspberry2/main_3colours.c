@@ -62,8 +62,8 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #define PREFIX_RDF              "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
 #define PREFIX_TD               "PREFIX td:<http://w3c.github.io/wot/w3c-wot-td-ontology.owl#> "
 #define PREFIX_DUL              "PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> "
-#define SEPA_SUBSCRIPTION_ADDRESS			"ws://192.168.1.146:9000/subscribe"
-#define SEPA_UPDATE_ADDRESS					"http://192.168.1.146:8000/update"
+#define SEPA_SUBSCRIPTION_ADDRESS			"ws://192.168.1.100:9000/subscribe"
+#define SEPA_UPDATE_ADDRESS					"http://192.168.1.100:8000/update"
 
 volatile sig_atomic_t alive=1,new_data=0;
 int blink_pid;
