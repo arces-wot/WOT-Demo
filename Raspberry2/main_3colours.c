@@ -32,7 +32,7 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #include <unistd.h>
 #include <signal.h>
 #include <math.h>
-#include "../../sepa-C-kpi/sepa_aggregator.h"
+#include "../../../sepa-C-kpi/sepa_aggregator.h"
 
 #define SEPA_LOGGER_ERROR
 //USE WIRINGPI PIN NUMBERS --> see https://it.pinout.xyz/pinout/wiringpi
