@@ -65,83 +65,112 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #define SEPA_SUBSCRIPTION_ADDRESS			"ws://192.168.1.146:9000/subscribe"
 #define SEPA_UPDATE_ADDRESS					"http://192.168.1.146:8000/update"
 
-volatile sig_atomic_t alive = 1;
+volatile sig_atomic_t alive=1,new_data=0;
+int blink_pid;
 int pipeFD[2];
+pSEPA_subscriber subClient;
 
 typedef struct rgbf {
     int r,g,b,f;
 } rgbf;
 
-void INThandler(int sig) {
+void HeartBeatHandler(int sig) {
     signal(sig, SIG_IGN);
     alive = 0;
     signal(SIGINT, SIG_DFL);
 }
 
+void BlinkHandler(int sig) {
+	new_data = 1;
+}
+
 void blink_process() {
-    rgbf input;
+	int data_read;
+    rgbf input={.r=0,.g=0,.b=0,.f=0},new;
     while (1) {
-        read()
-        digitalWrite(R_PIN,input.r);
-        digitalWrite(R_PIN,input.g);
-        digitalWrite(R_PIN,input.b);
-        usleep(lround(1000/input.f));
+		data_read = read(pipeFD[0],&new,sizeof(rgbf));
+        if (data_read==sizeof(rgbf)) {
+			new_data = 0;
+			if (new.r!=-1) input.r=new.r;
+			if (new.g!=-1) input.g=new.g;
+			if (new.b!=-1) input.b=new.b;
+			if (new.f!=-1) input.f=new.f;
+		}
+		else new={.r=-1,.g=-1,.b=-1,.f=-1};
+		if (input.f) {
+			digitalWrite(R_PIN,input.r);
+			digitalWrite(R_PIN,input.g);
+			digitalWrite(R_PIN,input.b);
+			if (!new_data) usleep(lround(500/input.f));
+			digitalWrite(R_PIN,!input.r);
+			digitalWrite(R_PIN,!input.g);
+			digitalWrite(R_PIN,!input.b);
+			if (!new_data) usleep(lround(500/input.f));
+		}
+		else pause();
     }
 }
 
 void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,int removedlen) {
 	int i;
+	char updateSPARQL[500];
+	rgbf newColour = {.r=-1,.g=-1,.b=-1,.f=-1};
 	if (added!=NULL) {
 		if (addedlen>1) printf("%d new requested detected.\n On the screen only the last will be shown.\n",addedlen);
 		else printf("New request detected!\n!");
 		for (i=0; i<addedlen; i++) {
 			if ((!strcmp(added[i].bindingName,"value")) && (strlen(added[i].value)==3)) {
-                // R
-                if ((added[i].value)[0]=='0')
-                else ;
-                // G
-                if ((added[i].value)[1]=='0')
-                else ;
-                // B
-                if ((added[i].value)[2]=='0')
-                else ;
+				newColour.r = !((added[i].value)[0]=='0');
+				newColour.g = !((added[i].value)[1]=='0');
+				newColour.b = !((added[i].value)[2]=='0');
+                
+                pthread_mutex_lock(&(subClient->subscription_mutex));
+                kill(blink_pid,SIGUSR1);
+				write(pipeFD[1],&newColour,sizeof(rgbf));
+				pthread_mutex_unlock(&(subClient->subscription_mutex));
+				
+                // updates on the sepa the property value
+                sprintf(updateSPARQL,PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_COLOUR_VALUETYPE " dul:hasDataValue ?oldValue} INSERT { " RGB_COLOUR_VALUETYPE " dul:hasDataValue '{\"r\":%d,\"g\":%d,\"b\":%d}'} WHERE { " RGB_COLOUR_PROPERTY_UUID " rdf:type td:Property. " RGB_COLOUR_PROPERTY_UUID " td:isWritable 'true'. " RGB_COLOUR_PROPERTY_UUID " td:hasValueType " RGB_COLOUR_VALUETYPE " }",newColour.r,newColour.g,newColour.b);
+                o=kpProduce(updateSPARQL,SEPA_UPDATE_ADDRESS,NULL);
+				if (o!=HTTP_200_OK) logE("Property " RGB_COLOUR_PROPERTY_UUID " update error\n");
             }
 		}
 		fprintfSepaNodes(stdout,added,addedlen,"value");
 		freeSepaNodes(added,addedlen);
 	}
-	if (removed!=NULL) {
-		printf("Removed %d items:\n",removedlen);
-		fprintfSepaNodes(stdout,removed,removedlen,"");
-		freeSepaNodes(removed,removedlen);
-	}
-	// TODO update value!
 	printf("\n");
 }
 
 void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,int removedlen) {
 	int i;
+	char updateSPARQL[500];
+	rgbf newFrequency = {.r=-1,.g=-1,.b=-1,.f=-1};
 	if (added!=NULL) {
 		if (addedlen>1) printf("%d new requested detected.\n On the screen only the last will be shown.\n",addedlen);
 		else printf("New request detected!\n!");
 		for (i=0; i<addedlen; i++) {
 			if (!strcmp(added[i].bindingName,"value")) {
+				sscanf(added[i].value,"%d",&(newFrequency.f));
+				
+				pthread_mutex_lock(&(subClient->subscription_mutex));
+				kill(blink_pid,SIGUSR1);
+				write(pipeFD[1],&newFrequency,sizeof(rgbf));
+				pthread_mutex_unlock(&(subClient->subscription_mutex));
+				
+				// updates on the sepa the property value
+                sprintf(updateSPARQL,PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_FREQ_VALUETYPE " dul:hasDataValue ?oldValue} INSERT { " RGB_FREQ_VALUETYPE " dul:hasDataValue '{\"f\":%d}'} WHERE { " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property. " RGB_FREQ_PROPERTY_UUID " td:isWritable 'true'. " RGB_FREQ_PROPERTY_UUID " td:hasValueType " RGB_FREQ_VALUETYPE " }",newColour.f);
+                o=kpProduce(updateSPARQL,SEPA_UPDATE_ADDRESS,NULL);
+				if (o!=HTTP_200_OK) logE("Property " RGB_FREQ_PROPERTY_UUID " update error\n");
             }
 		}
 		fprintfSepaNodes(stdout,added,addedlen,"value");
 		freeSepaNodes(added,addedlen);
 	}
-	if (removed!=NULL) {
-		printf("Removed %d items:\n",removedlen);
-		fprintfSepaNodes(stdout,removed,removedlen,"");
-		freeSepaNodes(removed,removedlen);
-	}
 	printf("\n");
-	// TODO update value!
 }
 
 int main(int argc, char **argv) {
-	int o,blink_pid;
+	int o;
 	char lcdHBInstance[50] = "";
 	char HBEventUpdate[1000] = "";
 	unsigned int count = 0;
@@ -159,8 +188,7 @@ int main(int argc, char **argv) {
     http_client_init();
 
 	// insert thing description
-	o=kpProduce(
-             PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE {" THING_UUID " wot:isDiscoverable ?oldDiscoverable. " THING_UUID " dul:hasLocation ?oldThingLocation} INSERT {" THING_UUID " rdf:type td:Thing. " THING_UUID " td:hasName '" THING_NAME "'. " THING_UUID " wot:isDiscoverable 'true'. " THING_UUID " dul:hasLocation " LOCATION_UUID "} WHERE {OPTIONAL{" THING_UUID " rdf:type td:Thing. " THING_UUID " dul:hasLocation ?oldThingLocation. " THING_UUID " wot:isDiscoverable ?oldDiscoverable. ?oldThingLocation rdf:type dul:PhysicalPlace}. " LOCATION_UUID " rdf:type dul:PhysicalPlace}"
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE {" THING_UUID " wot:isDiscoverable ?oldDiscoverable. " THING_UUID " dul:hasLocation ?oldThingLocation} INSERT {" THING_UUID " rdf:type td:Thing. " THING_UUID " td:hasName '" THING_NAME "'. " THING_UUID " wot:isDiscoverable 'true'. " THING_UUID " dul:hasLocation " LOCATION_UUID "} WHERE {OPTIONAL{" THING_UUID " rdf:type td:Thing. " THING_UUID " dul:hasLocation ?oldThingLocation. " THING_UUID " wot:isDiscoverable ?oldDiscoverable. ?oldThingLocation rdf:type dul:PhysicalPlace}. " LOCATION_UUID " rdf:type dul:PhysicalPlace}"
              ,SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
         logE("Thing Description insert update error in " THING_UUID "\n");
@@ -214,6 +242,7 @@ int main(int argc, char **argv) {
     if (!blink_pid) {
         // child process
         close(pipeFD[1]);
+        signal(SIGUSR1,blinkHandler);
         blink_process();
         return EXIT_SUCCESS;
     }
@@ -225,7 +254,7 @@ int main(int argc, char **argv) {
     close(pipeFD[0]);
 
     // declaration of subscriptions
-    sepa_subscriber_init();
+    subClient = sepa_subscriber_init();
     // subscribe to RGB Colour action requests
     sepa_subscription_builder(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "SELECT ?instance ?input ?value WHERE { " RGB_COLOURACTION " rdf:type td:Action. " RGB_COLOURACTION " wot:hasInstance ?instance. ?instance rdf:type wot:ActionInstance. OPTIONAL {?instance td:hasInput ?input. ?input dul:hasDataValue ?value}}"
               ,NULL,NULL,
@@ -245,7 +274,7 @@ int main(int argc, char **argv) {
     kpSubscribe(&freq_action_subscription);
 
 
-    signal(SIGINT, INThandler);
+    signal(SIGINT, HeartBeatHandler);
     // HeartBeat continuous loop
     while (alive) {
         sprintf(lcdHBInstance,"wot:3ColourHeartBeatEventInstance%u",count);

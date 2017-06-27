@@ -82,13 +82,8 @@ void actionRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,
 				lcdPuts(lcd,added[i].value);
             }
 		}
-		fprintfSepaNodes(stdout,added,addedlen,"value");
+		fprintfSepaNodes(stdout,added,addedlen,"");
 		freeSepaNodes(added,addedlen);
-	}
-	if (removed!=NULL) {
-		printf("Removed %d items:\n",removedlen);
-		fprintfSepaNodes(stdout,removed,removedlen,"");
-		freeSepaNodes(removed,removedlen);
 	}
 	printf("\n");
 }
