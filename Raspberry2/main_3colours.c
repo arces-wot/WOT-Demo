@@ -218,7 +218,7 @@ int main(int argc, char **argv) {
 	}
 
 	// declare Property color
-	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasProperty " RGB_COLOUR_PROPERTY_UUID ". " RGB_COLOUR_PROPERTY_UUID " rdf:type td:Property. " RGB_COLOUR_PROPERTY_UUID " td:hasName '" RGB_COLOUR_PROPERTY_NAME "'. " RGB_COLOUR_PROPERTY_UUID " td:hasStability '-1'. " RGB_COLOUR_PROPERTY_UUID " td:isWritable 'true'. " RGB_COLOUR_PROPERTY_UUID " td:hasValueType " RGB_COLOUR_VALUETYPE ". " RGB_COLOUR_VALUETYPE " dul:hasDataValue '{\"r\":0,\"g\":0,\"b\":0}' }WHERE {" THING_UUID " rdf:type td:Thing}"
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasProperty " RGB_COLOUR_PROPERTY_UUID ". " RGB_COLOUR_PROPERTY_UUID " rdf:type td:Property. " RGB_COLOUR_PROPERTY_UUID " td:hasName '" RGB_COLOUR_PROPERTY_NAME "'. " RGB_COLOUR_PROPERTY_UUID " td:hasStability '-1'. " RGB_COLOUR_PROPERTY_UUID " td:isWritable 'true'. " RGB_COLOUR_PROPERTY_UUID " td:hasValueType " RGB_COLOUR_VALUETYPE ". " RGB_COLOUR_VALUETYPE " rdf:type wot:Valuetype. " RGB_COLOUR_VALUETYPE " dul:hasDataValue '{\"r\":0,\"g\":0,\"b\":0}' }WHERE {" THING_UUID " rdf:type td:Thing}"
 				,SEPA_UPDATE_ADDRESS,NULL);
 	if (o!=HTTP_200_OK) {
 		logE("Property " RGB_COLOUR_PROPERTY_NAME " insert error\n");
@@ -226,7 +226,7 @@ int main(int argc, char **argv) {
 	}
 	
 	// declare Property frequency
-	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasProperty " RGB_FREQ_PROPERTY_UUID ". " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property. " RGB_FREQ_PROPERTY_UUID " td:hasName '" RGB_FREQ_PROPERTY_NAME "'. " RGB_FREQ_PROPERTY_UUID " td:hasStability '-1'. " RGB_FREQ_PROPERTY_UUID " td:isWritable 'true'. " RGB_FREQ_PROPERTY_UUID " td:hasValueType " RGB_FREQ_VALUETYPE ". " RGB_FREQ_VALUETYPE " dul:hasDataValue '{\"frequency\":0}' }WHERE {" THING_UUID " rdf:type td:Thing}"
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasProperty " RGB_FREQ_PROPERTY_UUID ". " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property. " RGB_FREQ_PROPERTY_UUID " td:hasName '" RGB_FREQ_PROPERTY_NAME "'. " RGB_FREQ_PROPERTY_UUID " td:hasStability '-1'. " RGB_FREQ_PROPERTY_UUID " td:isWritable 'true'. " RGB_FREQ_PROPERTY_UUID " td:hasValueType " RGB_FREQ_VALUETYPE ". " RGB_FREQ_VALUETYPE " rdf:type wot:Valuetype. " RGB_FREQ_VALUETYPE " dul:hasDataValue '{\"frequency\":0}' }WHERE {" THING_UUID " rdf:type td:Thing}"
 				,SEPA_UPDATE_ADDRESS,NULL);
 	if (o!=HTTP_200_OK) {
 		logE("Thing Description " RGB_FREQ_PROPERTY_NAME " insert error\n");
