@@ -25,18 +25,13 @@
 		},
 		"updates": {
 			"INIT_TD": {
-				"sparql": "DELETE { ?thing wot:isDiscoverable ?oldDiscoverable.
-			?thing dul:hasLocation ?oldThingLocation}
-		INSERT { ?thing rdf:type td:Thing.
+				"sparql": "DELETE {?thing wot:isDiscoverable ?oldDiscoverable} 
+				INSERT { ?thing rdf:type td:Thing.
 			?thing rdf:type ?thingType.
 			?thing td:hasName ?thingName.
-			?thing wot:isDiscoverable 'true' . 
-			?thing dul:hasLocation ?newThingLocation}
+			?thing wot:isDiscoverable 'true'}
 		WHERE { OPTIONAL {?thing rdf:type td:Thing.
-				?thing dul:hasLocation ?oldThingLocation.
-				?thing wot:isDiscoverable ?oldDiscoverable.
-				?oldThingLocation rdf:type dul:PhysicalPlace}.
-			?newThingLocation rdf:type dul:PhysicalPlace}",
+				?thing wot:isDiscoverable ?oldDiscoverable }}",
 				"forcedBindings": {
 					"thing": {
 						"type": "uri",
@@ -300,13 +295,22 @@
 					}
 				}
 			},
-			"PROPERTY_VALUE_UPDATE":{
+			"PROPERTY_VALUE_UPDATE": {
 				"sparql": "DELETE { ?valueType dul:hasDataValue ?oldValue} INSERT { ?valueType dul:hasDataValue ?newValue} WHERE { ?property rdf:type td:Property. ?property td:isWritable 'true'. ?property td:hasValueType ?valueType }",
-				"forcedBindings":{
-					"valueType":{"type":"uri","value":""},
-					"newValue":{"type":"literal","value":""},
-					"property":{"type":"uri","value":""}
-				} 
+				"forcedBindings": {
+					"valueType": {
+						"type": "uri",
+						"value": ""
+					},
+					"newValue": {
+						"type": "literal",
+						"value": ""
+					},
+					"property": {
+						"type": "uri",
+						"value": ""
+					}
+				}
 			}
 		},
 		"subscribes": {
