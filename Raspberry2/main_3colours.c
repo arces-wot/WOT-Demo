@@ -128,7 +128,7 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 		else printf("New request detected!\n!");
 		for (i=0; i<addedlen; i++) {
 			if (!strcmp(added[i].bindingName,"value")) {
-				sscanf(added[i].value,"{\"r\":%d,\"g\":%d,\"b\":%d}",&newColour.r,&newColour.g,&newColour.b);
+				sscanf(added[i].value,"{\"r\":%d,\"g\":%d,\"b\":%d}",&(newColour.r),&(newColour.g),&(newColour.b));
                 
                 //pthread_mutex_lock(&(subClient->subscription_mutex));
 				write(pipeFD[1],&newColour,sizeof(rgbf));
@@ -158,10 +158,10 @@ void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode *
 			if (!strcmp(added[i].bindingName,"value")) {
 				sscanf(added[i].value,"%d",&(newFrequency.f));
 				
-				pthread_mutex_lock(&(subClient->subscription_mutex));
+				//pthread_mutex_lock(&(subClient->subscription_mutex));
 				kill(blink_pid,SIGUSR1);
 				write(pipeFD[1],&newFrequency,sizeof(rgbf));
-				pthread_mutex_unlock(&(subClient->subscription_mutex));
+				//pthread_mutex_unlock(&(subClient->subscription_mutex));
 				
 				// updates on the sepa the property value
                 sprintf(updateSPARQL,PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_FREQ_VALUETYPE " dul:hasDataValue ?oldValue} INSERT { " RGB_FREQ_VALUETYPE " dul:hasDataValue '{\"frequency\":%d}'} WHERE { " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property. " RGB_FREQ_PROPERTY_UUID " td:isWritable 'true'. " RGB_FREQ_PROPERTY_UUID " td:hasValueType " RGB_FREQ_VALUETYPE " }",newFrequency.f);
