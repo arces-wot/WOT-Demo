@@ -88,26 +88,28 @@ void blink_process() {
 	int data_read;
     rgbf input={.r=0,.g=0,.b=0,.f=0},new;
     while (1) {
-		data_read = read(pipeFD[0],&new,sizeof(rgbf));
-        if (data_read==sizeof(rgbf)) {
-			new_data = 0;
-			if (new.r!=-1) input.r=new.r;
-			if (new.g!=-1) input.g=new.g;
-			if (new.b!=-1) input.b=new.b;
-			if (new.f!=-1) input.f=new.f;
-		}
-		else new = (rgbf) {.r=-1,.g=-1,.b=-1,.f=-1};
-		if (input.f) {
+		//data_read = read(pipeFD[0],&new,sizeof(rgbf));
+        //if (data_read==sizeof(rgbf)) {
+			//new_data = 0;
+			//if (new.r!=-1) input.r=new.r;
+			//if (new.g!=-1) input.g=new.g;
+			//if (new.b!=-1) input.b=new.b;
+			//if (new.f!=-1) input.f=new.f;
+		//}
+		//else new = (rgbf) {.r=-1,.g=-1,.b=-1,.f=-1};
+		//if (input.f) {
 			digitalWrite(R_PIN,input.r);
 			digitalWrite(R_PIN,input.g);
 			digitalWrite(R_PIN,input.b);
-			if (!new_data) usleep(lround(500/input.f));
+			//if (!new_data) usleep(lround(500/input.f));
+			usleep(500000);
 			digitalWrite(R_PIN,!input.r);
 			digitalWrite(R_PIN,!input.g);
 			digitalWrite(R_PIN,!input.b);
-			if (!new_data) usleep(lround(500/input.f));
-		}
-		else pause();
+			usleep(500000);
+			//if (!new_data) usleep(lround(500/input.f));
+		//}
+		//else pause();
     }
 }
 
