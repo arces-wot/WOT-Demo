@@ -136,9 +136,9 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 				//pthread_mutex_unlock(&(subClient->subscription_mutex));
 				
                 // updates on the sepa the property value
-                sprintf(updateSPARQL,PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_COLOUR_VALUETYPE " dul:hasDataValue ?oldValue} INSERT { " RGB_COLOUR_VALUETYPE " dul:hasDataValue '{\"r\":%d,\"g\":%d,\"b\":%d}'} WHERE { " RGB_COLOUR_PROPERTY_UUID " rdf:type td:Property. " RGB_COLOUR_PROPERTY_UUID " td:isWritable 'true'. " RGB_COLOUR_PROPERTY_UUID " td:hasValueType " RGB_COLOUR_VALUETYPE " }",newColour.r,newColour.g,newColour.b);
-                o=kpProduce(updateSPARQL,SEPA_UPDATE_ADDRESS,NULL);
-				if (o!=HTTP_200_OK) logE("Property " RGB_COLOUR_PROPERTY_UUID " update error\n");
+                //sprintf(updateSPARQL,PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_COLOUR_VALUETYPE " dul:hasDataValue ?oldValue} INSERT { " RGB_COLOUR_VALUETYPE " dul:hasDataValue '{\"r\":%d,\"g\":%d,\"b\":%d}'} WHERE { " RGB_COLOUR_PROPERTY_UUID " rdf:type td:Property. " RGB_COLOUR_PROPERTY_UUID " td:isWritable 'true'. " RGB_COLOUR_PROPERTY_UUID " td:hasValueType " RGB_COLOUR_VALUETYPE " }",newColour.r,newColour.g,newColour.b);
+                //o=kpProduce(updateSPARQL,SEPA_UPDATE_ADDRESS,NULL);
+				//if (o!=HTTP_200_OK) logE("Property " RGB_COLOUR_PROPERTY_UUID " update error\n");
             }
 		}
 		fprintfSepaNodes(stdout,added,addedlen,"changeColorRequestNotification ");
