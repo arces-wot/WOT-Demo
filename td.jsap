@@ -299,7 +299,7 @@
 						"value": ""
 					}
 				}
-			}
+			},
 			"PROPERTY_VALUE_UPDATE":{
 				"sparql": "DELETE { ?valueType dul:hasDataValue ?oldValue} INSERT { ?valueType dul:hasDataValue ?newValue} WHERE { ?property rdf:type td:Property. ?property td:isWritable 'true'. ?property td:hasValueType ?valueType }",
 				"forcedBindings":{
