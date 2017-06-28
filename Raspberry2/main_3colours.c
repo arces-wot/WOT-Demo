@@ -112,7 +112,12 @@ void blink_process() {
 			if (input.b==1) digitalWrite(B_PIN,0);
 			usleep(500000/input.f);
 		}
-		else pause();
+		else {
+			digitalWrite(R_PIN,input.r);
+			digitalWrite(G_PIN,input.g);
+			digitalWrite(B_PIN,input.b);
+			pause();
+		}
     }
 }
 
