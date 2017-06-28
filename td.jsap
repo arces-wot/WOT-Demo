@@ -25,18 +25,13 @@
 		},
 		"updates": {
 			"INIT_TD": {
-				"sparql": "DELETE { ?thing wot:isDiscoverable ?oldDiscoverable.
-			?thing dul:hasLocation ?oldThingLocation}
+				"sparql": "DELETE { ?thing wot:isDiscoverable ?oldDiscoverable . ?thing dul:hasLocation ?oldLocation}
 		INSERT { ?thing rdf:type td:Thing.
-			?thing rdf:type ?thingType.
 			?thing td:hasName ?thingName.
-			?thing wot:isDiscoverable 'true' . 
-			?thing dul:hasLocation ?newThingLocation}
+			?thing wot:isDiscoverable 'true' .
+			?thing dul:hasLocation ?location}
 		WHERE { OPTIONAL {?thing rdf:type td:Thing.
-				?thing dul:hasLocation ?oldThingLocation.
-				?thing wot:isDiscoverable ?oldDiscoverable.
-				?oldThingLocation rdf:type dul:PhysicalPlace}.
-			?newThingLocation rdf:type dul:PhysicalPlace}",
+				?thing wot:isDiscoverable ?oldDiscoverable . ?thing dul:hasLocation ?oldLocation}}",
 				"forcedBindings": {
 					"thing": {
 						"type": "uri",
@@ -46,11 +41,7 @@
 						"type": "literal",
 						"value": ""
 					},
-					"newThingLocation": {
-						"type": "uri",
-						"value": ""
-					},
-					"thingType": {
+					"location": {
 						"type": "uri",
 						"value": ""
 					}
@@ -307,10 +298,7 @@
 		},
 		"subscribes": {
 			"GET_ALL_THINGS": {
-				"sparql": "SELECT ?s WHERE { ?s rdf:type wot:Thing . ?s wot:isDiscoverable \"true\" }"
-			},
-			"GET_THING_DESCRIPTION": {
-				"sparql": "SELECT ?thingType ?place ?property ?pName ?pStability ?pWrite ?pValueType 
+				"sparql": "SELECT ?thing ?place ?property ?pName ?pStability ?pWrite ?pValueType 
 			?pDataValue ?event ?eName ?eProperty ?action ?aName ?aProtocol ?aProperty 
 			?component WHERE {?thing rdf:type td:Thing. 
 			?thing wot:isDiscoverable \"true\".
@@ -332,10 +320,7 @@
 			?component rdf:type td:Thing.
 			?component wot:isDiscoverable \"true\"}}",
 				"forcedBindings": {
-					"thing": {
-						"type": "uri",
-						"value": ""
-					}
+					
 				}
 			},
 			"SUBSCRIBE_TO_ACTION_REQUEST": {
