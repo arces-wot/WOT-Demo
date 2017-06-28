@@ -27,7 +27,6 @@
 			"INIT_TD": {
 				"sparql": "DELETE {?thing wot:isDiscoverable ?oldDiscoverable} 
 				INSERT { ?thing rdf:type td:Thing.
-			?thing rdf:type ?thingType.
 			?thing td:hasName ?thingName.
 			?thing wot:isDiscoverable 'true'}
 		WHERE { OPTIONAL {?thing rdf:type td:Thing.
