@@ -69,6 +69,7 @@ volatile sig_atomic_t alive=1,new_data=0;
 int blink_pid;
 int pipeFD[2];
 pSEPA_subscriber subClient;
+rgbf newData;
 
 typedef struct rgbf {
     int r,g,b,f;
@@ -81,17 +82,17 @@ void HeartBeatHandler(int sig) {
 }
 
 void BlinkHandler(int sig) {
+	read(pipeFD[0],&newData,sizeof(rgbf));
 	new_data = 1;
 }
 
 void blink_process() {
 	int data_read;
-    rgbf input={.r=0,.g=0,.b=0,.f=0},new;
+    rgbf input={.r=0,.g=0,.b=0,.f=0};
     while (1) {
-		data_read = read(pipeFD[0],&new,sizeof(rgbf));
-        if (data_read==sizeof(rgbf)) {
+        if (new_data) {
 			printf("Got new values! r=%d,g=%d,b=%d,f=%d\n",new.r,new.g,new.b,new.f);
-			//new_data = 0;
+			new_data = 0;
 			if (new.r!=-1) input.r=new.r;
 			if (new.g!=-1) input.g=new.g;
 			if (new.b!=-1) input.b=new.b;
@@ -100,13 +101,13 @@ void blink_process() {
 		//else new = (rgbf) {.r=-1,.g=-1,.b=-1,.f=-1};
 		//if (input.f) {
 			digitalWrite(R_PIN,input.r);
-			digitalWrite(R_PIN,input.g);
-			digitalWrite(R_PIN,input.b);
+			digitalWrite(G_PIN,input.g);
+			digitalWrite(B_PIN,input.b);
 			//if (!new_data) usleep(lround(500/input.f));
 			usleep(500000);
 			digitalWrite(R_PIN,!input.r);
-			digitalWrite(R_PIN,!input.g);
-			digitalWrite(R_PIN,!input.b);
+			digitalWrite(G_PIN,!input.g);
+			digitalWrite(B_PIN,!input.b);
 			usleep(500000);
 			//if (!new_data) usleep(lround(500/input.f));
 		//}
@@ -126,8 +127,8 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 				sscanf(added[i].value,"{\"r\":%d,\"g\":%d,\"b\":%d}",&newColour.r,&newColour.g,&newColour.b);
                 
                 pthread_mutex_lock(&(subClient->subscription_mutex));
-                kill(blink_pid,SIGUSR1);
 				write(pipeFD[1],&newColour,sizeof(rgbf));
+				kill(blink_pid,SIGUSR1);
 				pthread_mutex_unlock(&(subClient->subscription_mutex));
 				
                 // updates on the sepa the property value
