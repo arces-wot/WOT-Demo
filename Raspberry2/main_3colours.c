@@ -130,10 +130,10 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 			if (!strcmp(added[i].bindingName,"value")) {
 				sscanf(added[i].value,"{\"r\":%d,\"g\":%d,\"b\":%d}",&newColour.r,&newColour.g,&newColour.b);
                 
-                pthread_mutex_lock(&(subClient->subscription_mutex));
+                //pthread_mutex_lock(&(subClient->subscription_mutex));
 				write(pipeFD[1],&newColour,sizeof(rgbf));
 				kill(blink_pid,SIGUSR1);
-				pthread_mutex_unlock(&(subClient->subscription_mutex));
+				//pthread_mutex_unlock(&(subClient->subscription_mutex));
 				
                 // updates on the sepa the property value
                 sprintf(updateSPARQL,PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_COLOUR_VALUETYPE " dul:hasDataValue ?oldValue} INSERT { " RGB_COLOUR_VALUETYPE " dul:hasDataValue '{\"r\":%d,\"g\":%d,\"b\":%d}'} WHERE { " RGB_COLOUR_PROPERTY_UUID " rdf:type td:Property. " RGB_COLOUR_PROPERTY_UUID " td:isWritable 'true'. " RGB_COLOUR_PROPERTY_UUID " td:hasValueType " RGB_COLOUR_VALUETYPE " }",newColour.r,newColour.g,newColour.b);
