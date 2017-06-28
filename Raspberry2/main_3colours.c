@@ -122,7 +122,7 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 		if (addedlen>1) printf("%d new requested detected.\n On the screen only the last will be shown.\n",addedlen);
 		else printf("New request detected!\n!");
 		for (i=0; i<addedlen; i++) {
-			if ((!strcmp(added[i].bindingName,"value")) && (strlen(added[i].value)==3)) {
+			if (!strcmp(added[i].bindingName,"value")) {
 				sscanf(added[i].value,"{\"r\":%d,\"g\":%d,\"b\":%d}",&newColour.r,&newColour.g,&newColour.b);
                 
                 pthread_mutex_lock(&(subClient->subscription_mutex));
