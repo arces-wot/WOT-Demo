@@ -65,15 +65,15 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #define SEPA_SUBSCRIPTION_ADDRESS			"ws://192.168.0.1:9000/subscribe"
 #define SEPA_UPDATE_ADDRESS					"http://192.168.0.1:8000/update"
 
+typedef struct rgbf {
+    int r,g,b,f;
+} rgbf;
+
 volatile sig_atomic_t alive=1,new_data=0;
 int blink_pid;
 int pipeFD[2];
 pSEPA_subscriber subClient;
 rgbf newData;
-
-typedef struct rgbf {
-    int r,g,b,f;
-} rgbf;
 
 void HeartBeatHandler(int sig) {
     signal(sig, SIG_IGN);
