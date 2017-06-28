@@ -84,7 +84,7 @@ void HeartBeatHandler(int sig) {
 void BlinkHandler(int sig) {
 	signal(sig, SIG_IGN);
 	read(pipeFD[0],&newData,sizeof(rgbf));
-	printf("BlinkHandler! %d %d %d %d\n",newData.r,newData.g,newData.b,newData.f);
+	logD("BlinkHandler run");
 	new_data = 1;
 	signal(SIGUSR1,BlinkHandler);
 }
@@ -93,9 +93,8 @@ void blink_process() {
 	int data_read;
     rgbf input={.r=0,.g=0,.b=0,.f=0};
     while (1) {
-		
         if (new_data) {
-			printf("Got new values! r=%d,g=%d,b=%d,f=%d\n",newData.r,newData.g,newData.b,newData.f);
+			logD("Got new values! r=%d,g=%d,b=%d,f=%d\n",newData.r,newData.g,newData.b,newData.f);
 			new_data = 0;
 			if (newData.r!=-1) input.r=newData.r;
 			if (newData.g!=-1) input.g=newData.g;
