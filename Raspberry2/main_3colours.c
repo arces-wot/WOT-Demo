@@ -157,6 +157,7 @@ void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode *
 		if (addedlen>1) printf("%d new requested detected.\n On the screen only the last will be shown.\n",addedlen);
 		else printf("New request detected!\n!");
 		fprintfSepaNodes(stdout,added,addedlen,"changeFrequencyRequestNotification ");
+		printf("addedlen=%d\n",addedlen);
 		for (i=0; i<addedlen; i++) {
 			printf("ma qui non scrive niente? --> %d %s %s\n",i,added[i].bindingName,added[i].value);
 			if (!strcmp(added[i].bindingName,"value")) {
