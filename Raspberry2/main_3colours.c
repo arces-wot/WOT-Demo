@@ -62,8 +62,8 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #define PREFIX_RDF              "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
 #define PREFIX_TD               "PREFIX td:<http://w3c.github.io/wot/w3c-wot-td-ontology.owl#> "
 #define PREFIX_DUL              "PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> "
-#define SEPA_SUBSCRIPTION_ADDRESS			"ws://192.168.1.100:9000/subscribe"
-#define SEPA_UPDATE_ADDRESS					"http://192.168.1.100:8000/update"
+#define SEPA_SUBSCRIPTION_ADDRESS			"ws://192.168.0.1:9000/subscribe"
+#define SEPA_UPDATE_ADDRESS					"http://192.168.0.1:8000/update"
 
 volatile sig_atomic_t alive=1,new_data=0;
 int blink_pid;
@@ -88,14 +88,15 @@ void blink_process() {
 	int data_read;
     rgbf input={.r=0,.g=0,.b=0,.f=0},new;
     while (1) {
-		//data_read = read(pipeFD[0],&new,sizeof(rgbf));
-        //if (data_read==sizeof(rgbf)) {
+		data_read = read(pipeFD[0],&new,sizeof(rgbf));
+        if (data_read==sizeof(rgbf)) {
+			printf("Got new values! r=%d,g=%d,b=%d,f=%d\n",new.r,new.g,new.b,new.f);
 			//new_data = 0;
 			//if (new.r!=-1) input.r=new.r;
 			//if (new.g!=-1) input.g=new.g;
 			//if (new.b!=-1) input.b=new.b;
 			//if (new.f!=-1) input.f=new.f;
-		//}
+		}
 		//else new = (rgbf) {.r=-1,.g=-1,.b=-1,.f=-1};
 		//if (input.f) {
 			digitalWrite(R_PIN,input.r);
@@ -160,7 +161,7 @@ void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode *
 				pthread_mutex_unlock(&(subClient->subscription_mutex));
 				
 				// updates on the sepa the property value
-                sprintf(updateSPARQL,PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_FREQ_VALUETYPE " dul:hasDataValue ?oldValue} INSERT { " RGB_FREQ_VALUETYPE " dul:hasDataValue '{\"f\":%d}'} WHERE { " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property. " RGB_FREQ_PROPERTY_UUID " td:isWritable 'true'. " RGB_FREQ_PROPERTY_UUID " td:hasValueType " RGB_FREQ_VALUETYPE " }",newFrequency.f);
+                sprintf(updateSPARQL,PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_FREQ_VALUETYPE " dul:hasDataValue ?oldValue} INSERT { " RGB_FREQ_VALUETYPE " dul:hasDataValue '{\"frequency\":%d}'} WHERE { " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property. " RGB_FREQ_PROPERTY_UUID " td:isWritable 'true'. " RGB_FREQ_PROPERTY_UUID " td:hasValueType " RGB_FREQ_VALUETYPE " }",newFrequency.f);
                 o=kpProduce(updateSPARQL,SEPA_UPDATE_ADDRESS,NULL);
 				if (o!=HTTP_200_OK) logE("Property " RGB_FREQ_PROPERTY_UUID " update error\n");
             }
@@ -220,7 +221,7 @@ int main(int argc, char **argv) {
 	}
 
 	// declare Property color
-	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasProperty " RGB_COLOUR_PROPERTY_UUID ". " RGB_COLOUR_PROPERTY_UUID " rdf:type td:Property. " RGB_COLOUR_PROPERTY_UUID " td:hasName '" RGB_COLOUR_PROPERTY_NAME "'. " RGB_COLOUR_PROPERTY_UUID " td:hasStability '-1'. " RGB_COLOUR_PROPERTY_UUID " td:isWritable 'true'. " RGB_COLOUR_PROPERTY_UUID " td:hasValueType " RGB_COLOUR_VALUETYPE ". " RGB_COLOUR_VALUETYPE " rdf:type wot:Valuetype. " RGB_COLOUR_VALUETYPE " dul:hasDataValue '{\"r\":0,\"g\":0,\"b\":0}' }WHERE {" THING_UUID " rdf:type td:Thing}"
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasProperty " RGB_COLOUR_PROPERTY_UUID ". " RGB_COLOUR_PROPERTY_UUID " rdf:type td:Property. " RGB_COLOUR_PROPERTY_UUID " td:hasName '" RGB_COLOUR_PROPERTY_NAME "'. " RGB_COLOUR_PROPERTY_UUID " td:hasStability '-1'. " RGB_COLOUR_PROPERTY_UUID " td:isWritable 'true'. " RGB_COLOUR_PROPERTY_UUID " td:hasValueType " RGB_COLOUR_VALUETYPE ". " RGB_COLOUR_VALUETYPE " rdf:type wot:Valuetype. " RGB_COLOUR_VALUETYPE " dul:hasDataValue '{\"r\":0,\"g\":0,\"b\":0}' } WHERE {" THING_UUID " rdf:type td:Thing}"
 				,SEPA_UPDATE_ADDRESS,NULL);
 	if (o!=HTTP_200_OK) {
 		logE("Property " RGB_COLOUR_PROPERTY_NAME " insert error\n");
@@ -228,7 +229,7 @@ int main(int argc, char **argv) {
 	}
 	
 	// declare Property frequency
-	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasProperty " RGB_FREQ_PROPERTY_UUID ". " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property. " RGB_FREQ_PROPERTY_UUID " td:hasName '" RGB_FREQ_PROPERTY_NAME "'. " RGB_FREQ_PROPERTY_UUID " td:hasStability '-1'. " RGB_FREQ_PROPERTY_UUID " td:isWritable 'true'. " RGB_FREQ_PROPERTY_UUID " td:hasValueType " RGB_FREQ_VALUETYPE ". " RGB_FREQ_VALUETYPE " rdf:type wot:Valuetype. " RGB_FREQ_VALUETYPE " dul:hasDataValue '{\"frequency\":0}' }WHERE {" THING_UUID " rdf:type td:Thing}"
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasProperty " RGB_FREQ_PROPERTY_UUID ". " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property. " RGB_FREQ_PROPERTY_UUID " td:hasName '" RGB_FREQ_PROPERTY_NAME "'. " RGB_FREQ_PROPERTY_UUID " td:hasStability '-1'. " RGB_FREQ_PROPERTY_UUID " td:isWritable 'true'. " RGB_FREQ_PROPERTY_UUID " td:hasValueType " RGB_FREQ_VALUETYPE ". " RGB_FREQ_VALUETYPE " rdf:type wot:Valuetype. " RGB_FREQ_VALUETYPE " dul:hasDataValue '{\"frequency\":0}' } WHERE {" THING_UUID " rdf:type td:Thing}"
 				,SEPA_UPDATE_ADDRESS,NULL);
 	if (o!=HTTP_200_OK) {
 		logE("Thing Description " RGB_FREQ_PROPERTY_NAME " insert error\n");
