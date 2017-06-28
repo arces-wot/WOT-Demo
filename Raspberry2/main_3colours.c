@@ -136,7 +136,7 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 				if (o!=HTTP_200_OK) logE("Property " RGB_COLOUR_PROPERTY_UUID " update error\n");
             }
 		}
-		fprintfSepaNodes(stdout,added,addedlen,"value");
+		fprintfSepaNodes(stdout,added,addedlen,"changeColorRequestNotification ");
 		freeSepaNodes(added,addedlen);
 	}
 	printf("\n");
