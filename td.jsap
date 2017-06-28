@@ -53,11 +53,16 @@
     			?propertyUUID td:hasName ?propertyUUIDName. 
     			?propertyUUID td:hasStability ?propertyUUIDStability. 
     			?propertyUUID td:isWritable ?propertyUUIDWritability. 
-    			?propertyUUID td:hasValueType ?propertyUUIDValueType. 
+    			?propertyUUID td:hasValueType ?propertyUUIDValueType.
+    			?propertyUUIDValueType rdf:type ?dataTypeURI.
     			?propertyUUIDValueType dul:hasDataValue ?propertyUUIDValueTypeContent}
     			WHERE {?thing rdf:type td:Thing}",
 				"forcedBindings": {
 					"thing": {
+						"type": "uri",
+						"value": ""
+					},
+					"dataTypeURI": {
 						"type": "uri",
 						"value": ""
 					},
@@ -184,20 +189,27 @@
     		?oldInstance rdf:type wot:EventInstance. 
     		?oldInstance wot:hasTimeStamp ?eOldTimeStamp.
     		?oldInstance td:hasOutput ?eOldOutput.
+    		?eOldOutput rdf:type ?dataTypeURI.
     		?eOldOutput dul:hasDataValue ?oldValue} 
     		INSERT {?event wot:hasInstance ?newInstance. 
     		?newInstance rdf:type wot:EventInstance. 
     		?newInstance wot:hasTimeStamp ?time .
     		?newInstance td:hasOutput ?eNewOutput.
+    		?eNewOutput rdf:type ?dataTypeURI.
     		?eNewOutput dul:hasDataValue ?newValue} 
     		WHERE {BIND(now() AS ?time) . ?event rdf:type td:Event. 
     		OPTIONAL {?event wot:hasInstance ?oldInstance. 
     		?oldInstance rdf:type wot:EventInstance. 
     		?oldInstance wot:hasTimeStamp ?eOldTimeStamp.
     		?oldInstance td:hasOutput ?eOldOutput.
+    		?eOldOutput rdf:type ?dataTypeURI.
     		?eOldOutput dul:hasDataValue ?oldValue}}",
 				"forcedBindings": {
 					"event": {
+						"type": "uri",
+						"value": ""
+					},
+					"dataTypeURI": {
 						"type": "uri",
 						"value": ""
 					},
@@ -242,17 +254,20 @@
     		?oldInstance rdf:type wot:ActionInstance. 
     		?oldInstance wot:hasTimeStamp ?aOldTimeStamp. 
     		?oldInstance td:hasInput ?oldInput. 
+    		?oldInput rdf:type ?dataTypeURI.
     		?oldInput dul:hasDataValue ?oldValue} 
     		INSERT {?action wot:hasInstance ?newInstance. 
     		?newInstance rdf:type wot:ActionInstance. 
     		?newInstance wot:hasTimeStamp ?time. 
     		?newInstance td:hasInput ?newInput. 
+    		?newInput rdf:type ?dataTypeURI.
     		?newInput dul:hasDataValue ?newValue} 
     		WHERE {BIND(now() AS ?time) . ?action rdf:type td:Action. 
     		OPTIONAL{?action wot:hasInstance ?oldInstance. 
     		?oldInstance rdf:type wot:ActionInstance. 
     		?oldInstance wot:hasTimeStamp ?aOldTimeStamp. 
     		?oldInstance td:hasInput ?oldInput. 
+    		?oldInput rdf:type ?dataTypeURI.
     		?oldInput dul:hasDataValue ?oldValue}}",
 				"forcedBindings": {
 					"action": {
@@ -260,6 +275,10 @@
 						"value": ""
 					},
 					"newInstance": {
+						"type": "uri",
+						"value": ""
+					},
+					"dataTypeURI": {
 						"type": "uri",
 						"value": ""
 					},
@@ -318,7 +337,7 @@
 				"sparql": "SELECT ?s WHERE { ?s rdf:type wot:Thing . ?s wot:isDiscoverable \"true\" }"
 			},
 			"GET_THING_DESCRIPTION": {
-				"sparql": "SELECT ?thingType ?place ?property ?pName ?pStability ?pWrite ?pValueType 
+				"sparql": "SELECT ?thingType ?place ?property ?pName ?pStability ?pWrite ?pValueType ?dataTypeURI
 			?pDataValue ?event ?eName ?eProperty ?action ?aName ?aProtocol ?aProperty 
 			?component WHERE {?thing rdf:type td:Thing. 
 			?thing wot:isDiscoverable \"true\".
@@ -327,7 +346,8 @@
 			?property td:hasName ?pName. 
 			?property td:hasStability ?pStability. 
 			?property td:isWritable ?pWrite. 
-			?property td:hasValueType ?pValueType. 
+			?property td:hasValueType ?pValueType.
+			?pValueType rdf:type ?dataTypeURI.
 			?pValueType dul:hasDataValue ?pDataValue}. 
 			OPTIONAL {?thing td:hasEvent ?event. 
 			?event td:hasName ?eName. 
