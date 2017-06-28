@@ -171,7 +171,7 @@ void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode *
 				//if (o!=HTTP_200_OK) logE("Property " RGB_FREQ_PROPERTY_UUID " update error\n");
             }
 		}
-		fprintfSepaNodes(stdout,added,addedlen,"value");
+		fprintfSepaNodes(stdout,added,addedlen,"changeFrequencyRequestNotification ");
 		freeSepaNodes(added,addedlen);
 	}
 	printf("\n");
