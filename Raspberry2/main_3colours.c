@@ -131,8 +131,8 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 				sscanf(added[i].value,"{\"r\":%d,\"g\":%d,\"b\":%d}",&(newColour.r),&(newColour.g),&(newColour.b));
                 
                 //pthread_mutex_lock(&(subClient->subscription_mutex));
-				write(pipeFD[1],&newColour,sizeof(rgbf));
-				kill(blink_pid,SIGUSR1);
+				//write(pipeFD[1],&newColour,sizeof(rgbf));
+				//kill(blink_pid,SIGUSR1);
 				//pthread_mutex_unlock(&(subClient->subscription_mutex));
 				
                 // updates on the sepa the property value
