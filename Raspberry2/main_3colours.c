@@ -280,7 +280,7 @@ int main(int argc, char **argv) {
               ,NULL,NULL,
               SEPA_SUBSCRIPTION_ADDRESS,
               &freq_action_subscription);
-    sepa_setSubscriptionHandlers(changeColorRequestNotification,NULL,&freq_action_subscription);
+    sepa_setSubscriptionHandlers(changeFrequencyRequestNotification,NULL,&freq_action_subscription);
     fprintfSubscriptionParams(stdout,freq_action_subscription);
     kpSubscribe(&freq_action_subscription);
 
