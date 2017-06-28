@@ -94,14 +94,14 @@ void blink_process() {
     rgbf input={.r=0,.g=0,.b=0,.f=0};
     while (1) {
 		
-        //if (new_data) {
-			//printf("Got new values! r=%d,g=%d,b=%d,f=%d\n",newData.r,newData.g,newData.b,newData.f);
-			//new_data = 0;
-			//if (newData.r!=-1) input.r=newData.r;
-			//if (newData.g!=-1) input.g=newData.g;
-			//if (newData.b!=-1) input.b=newData.b;
-			//if (newData.f!=-1) input.f=newData.f;
-		//}
+        if (new_data) {
+			printf("Got new values! r=%d,g=%d,b=%d,f=%d\n",newData.r,newData.g,newData.b,newData.f);
+			new_data = 0;
+			if (newData.r!=-1) input.r=newData.r;
+			if (newData.g!=-1) input.g=newData.g;
+			if (newData.b!=-1) input.b=newData.b;
+			if (newData.f!=-1) input.f=newData.f;
+		}
 		//else new = (rgbf) {.r=-1,.g=-1,.b=-1,.f=-1};
 		//if (input.f) {
 			digitalWrite(R_PIN,input.r);
@@ -131,8 +131,8 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 				sscanf(added[i].value,"{\"r\":%d,\"g\":%d,\"b\":%d}",&(newColour.r),&(newColour.g),&(newColour.b));
                 
                 //pthread_mutex_lock(&(subClient->subscription_mutex));
-				//write(pipeFD[1],&newColour,sizeof(rgbf));
-				//kill(blink_pid,SIGUSR1);
+				write(pipeFD[1],&newColour,sizeof(rgbf));
+				kill(blink_pid,SIGUSR1);
 				//pthread_mutex_unlock(&(subClient->subscription_mutex));
 				
                 // updates on the sepa the property value
