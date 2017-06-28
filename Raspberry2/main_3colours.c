@@ -82,14 +82,18 @@ void HeartBeatHandler(int sig) {
 }
 
 void BlinkHandler(int sig) {
+	signal(sig, SIG_IGN);
+	printf("BlinkHandler!\n");
 	read(pipeFD[0],&newData,sizeof(rgbf));
 	new_data = 1;
+	signal(SIGUSR1,BlinkHandler);
 }
 
 void blink_process() {
 	int data_read;
     rgbf input={.r=0,.g=0,.b=0,.f=0};
     while (1) {
+		
         if (new_data) {
 			printf("Got new values! r=%d,g=%d,b=%d,f=%d\n",newData.r,newData.g,newData.b,newData.f);
 			new_data = 0;
@@ -236,7 +240,7 @@ int main(int argc, char **argv) {
 	}
 
     // creation of blink process, communicating with
-    if (pipe2(pipeFD,O_NONBLOCK)) {
+    if (pipe(pipeFD)) {
         perror("Pipe creation error - ");
         return EXIT_FAILURE;
     }
