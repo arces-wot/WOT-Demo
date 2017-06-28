@@ -83,8 +83,8 @@ void HeartBeatHandler(int sig) {
 
 void BlinkHandler(int sig) {
 	signal(sig, SIG_IGN);
-	printf("BlinkHandler!\n");
 	read(pipeFD[0],&newData,sizeof(rgbf));
+	printf("BlinkHandler! %d %d %d %d\n",newData.r,newData.g,newData.b,newData.f);
 	new_data = 1;
 	signal(SIGUSR1,BlinkHandler);
 }
@@ -102,20 +102,22 @@ void blink_process() {
 			if (newData.b!=-1) input.b=newData.b;
 			if (newData.f!=-1) input.f=newData.f;
 		}
-		//else new = (rgbf) {.r=-1,.g=-1,.b=-1,.f=-1};
-		//if (input.f) {
+		if (input.f>0) {
+			if (input.r==1) digitalWrite(R_PIN,1);
+			if (input.g==1) digitalWrite(G_PIN,1);
+			if (input.b==1) digitalWrite(B_PIN,1);
+			usleep(500000/input.f);
+			if (input.r==1) digitalWrite(R_PIN,0);
+			if (input.g==1) digitalWrite(G_PIN,0);
+			if (input.b==1) digitalWrite(B_PIN,0);
+			usleep(500000/input.f);
+		}
+		else {
 			digitalWrite(R_PIN,input.r);
 			digitalWrite(G_PIN,input.g);
 			digitalWrite(B_PIN,input.b);
-			//if (!new_data) usleep(lround(500/input.f));
-			usleep(500000);
-			digitalWrite(R_PIN,!input.r);
-			digitalWrite(G_PIN,!input.g);
-			digitalWrite(B_PIN,!input.b);
-			usleep(500000);
-			//if (!new_data) usleep(lround(500/input.f));
-		//}
-		//else pause();
+			pause();
+		}
     }
 }
 
@@ -128,8 +130,8 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 		else printf("New request detected!\n!");
 		for (i=0; i<addedlen; i++) {
 			if (!strcmp(added[i].bindingName,"value")) {
-				sscanf(added[i].value,"{\"r\":%d,\"g\":%d,\"b\":%d}",&(newColour.r),&(newColour.g),&(newColour.b));
-                
+				sscanf(added[i].value,"{\\\"r\\\":%d,\\\"g\\\":%d,\\\"b\\\":%d}",&(newColour.r),&(newColour.g),&(newColour.b));
+                //printf("BlinkHandler! %d %d %d %d\n",newColour.r,newColour.g,newColour.b,newColour.f);
                 //pthread_mutex_lock(&(subClient->subscription_mutex));
 				write(pipeFD[1],&newColour,sizeof(rgbf));
 				kill(blink_pid,SIGUSR1);
@@ -154,22 +156,25 @@ void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode *
 	if (added!=NULL) {
 		if (addedlen>1) printf("%d new requested detected.\n On the screen only the last will be shown.\n",addedlen);
 		else printf("New request detected!\n!");
+		fprintfSepaNodes(stdout,added,addedlen,"changeFrequencyRequestNotification ");
+		printf("addedlen=%d\n",addedlen);
 		for (i=0; i<addedlen; i++) {
+			printf("ma qui non scrive niente? --> %d %s %s\n",i,added[i].bindingName,added[i].value);
 			if (!strcmp(added[i].bindingName,"value")) {
-				sscanf(added[i].value,"%d",&(newFrequency.f));
-				
+				sscanf(added[i].value,"{\\\"frequency\\\":%d}",&(newFrequency.f));
+				printf("\t NEW FREQUENCY FOUND: %d\n",newFrequency.f);
 				//pthread_mutex_lock(&(subClient->subscription_mutex));
-				kill(blink_pid,SIGUSR1);
 				write(pipeFD[1],&newFrequency,sizeof(rgbf));
+				kill(blink_pid,SIGUSR1);
 				//pthread_mutex_unlock(&(subClient->subscription_mutex));
 				
 				// updates on the sepa the property value
-                sprintf(updateSPARQL,PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_FREQ_VALUETYPE " dul:hasDataValue ?oldValue} INSERT { " RGB_FREQ_VALUETYPE " dul:hasDataValue '{\"frequency\":%d}'} WHERE { " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property. " RGB_FREQ_PROPERTY_UUID " td:isWritable 'true'. " RGB_FREQ_PROPERTY_UUID " td:hasValueType " RGB_FREQ_VALUETYPE " }",newFrequency.f);
-                o=kpProduce(updateSPARQL,SEPA_UPDATE_ADDRESS,NULL);
-				if (o!=HTTP_200_OK) logE("Property " RGB_FREQ_PROPERTY_UUID " update error\n");
+                //sprintf(updateSPARQL,PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_FREQ_VALUETYPE " dul:hasDataValue ?oldValue} INSERT { " RGB_FREQ_VALUETYPE " dul:hasDataValue '{\"frequency\":%d}'} WHERE { " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property. " RGB_FREQ_PROPERTY_UUID " td:isWritable 'true'. " RGB_FREQ_PROPERTY_UUID " td:hasValueType " RGB_FREQ_VALUETYPE " }",newFrequency.f);
+                //o=kpProduce(updateSPARQL,SEPA_UPDATE_ADDRESS,NULL);
+				//if (o!=HTTP_200_OK) logE("Property " RGB_FREQ_PROPERTY_UUID " update error\n");
             }
 		}
-		fprintfSepaNodes(stdout,added,addedlen,"value");
+		//fprintfSepaNodes(stdout,added,addedlen,"changeFrequencyRequestNotification ");
 		freeSepaNodes(added,addedlen);
 	}
 	printf("\n");
@@ -275,7 +280,7 @@ int main(int argc, char **argv) {
               ,NULL,NULL,
               SEPA_SUBSCRIPTION_ADDRESS,
               &freq_action_subscription);
-    sepa_setSubscriptionHandlers(changeColorRequestNotification,NULL,&freq_action_subscription);
+    sepa_setSubscriptionHandlers(changeFrequencyRequestNotification,NULL,&freq_action_subscription);
     fprintfSubscriptionParams(stdout,freq_action_subscription);
     kpSubscribe(&freq_action_subscription);
 
