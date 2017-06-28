@@ -83,8 +83,8 @@ void HeartBeatHandler(int sig) {
 
 void BlinkHandler(int sig) {
 	signal(sig, SIG_IGN);
-	printf("BlinkHandler!\n");
 	read(pipeFD[0],&newData,sizeof(rgbf));
+	printf("BlinkHandler! %d %d %d %d\n",newData.r,newData.g,newData.b,newData.f);
 	new_data = 1;
 	signal(SIGUSR1,BlinkHandler);
 }
