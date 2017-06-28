@@ -22,16 +22,12 @@
  * This code is made for the W3C Web Of Things Plugfest in Dusseldorf (July 2017)
  * 24 june 2017
  *
-gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_consumer.c
-../../../sepa-C-kpi/sepa_secure.c ../../../sepa-C-kpi/jsmn.c -o main_lcd -pthread -lcurl
-`pkg-config --cflags --libs glib-2.0 libwebsockets` -lwiringPi -lwiringPiDev
+gcc main_3colours.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_consumer.c ../../../sepa-C-kpi/sepa_secure.c ../../../sepa-C-kpi/jsmn.c ../../../sepa-C-kpi/sepa_producer.c -o main_3colours -pthread -lcurl `pkg-config --cflags --libs glib-2.0 libwebsockets` -lwiringPi -lwiringPiDev
  */
 
 #include <wiringPi.h>
-#include <fcntl.h>
 #include <unistd.h>
 #include <signal.h>
-#include <math.h>
 #include "../../../sepa-C-kpi/sepa_aggregator.h"
 
 #define SEPA_LOGGER_ERROR
@@ -40,30 +36,36 @@ gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_con
 #define G_PIN   2
 #define B_PIN   3
 #define ALIVE_SECONDS	10
+#define uHALF_SECOND	500000
 
-#define THING_UUID			    "wot:Raspberry2"
-#define THING_NAME              "Raspi3ColourLed"
-#define LOCATION_UUID		    "wot:MyLocation"
-#define RGB_HEART               "wot:3ColourHeartBeatEvent"
-#define RGB_HEART_NAME          "Raspi3ColourAlive"
-#define RGB_COLOURACTION        "wot:ChangeColourAction"
-#define RGB_COLOURACTION_NAME   "ChangeRGBLedColour"
-#define RGB_FREQ_ACTION         "wot:ChangeFrequencyAction"
-#define RGB_FREQ_ACTION_NAME    "ChangeRGBBlinkFrequency"
+#define THING_UUID			    	"wot:Raspberry2"
+#define THING_NAME              	"Raspi3ColourLed"
+#define LOCATION_UUID		    	"wot:MyLocation"
+#define RGB_HEART               	"wot:3ColourHeartBeatEvent"
+#define RGB_HEART_NAME          	"Raspi3ColourAlive"
+#define RGB_COLOURACTION        	"wot:ChangeColourAction"
+#define RGB_COLOURACTION_NAME   	"ChangeRGBLedColour"
+#define RGB_FREQ_ACTION         	"wot:ChangeFrequencyAction"
+#define RGB_FREQ_ACTION_NAME    	"ChangeRGBBlinkFrequency"
 #define RGB_COLOUR_PROPERTY_UUID	"wot:RGBcolourProperty"
 #define RGB_COLOUR_PROPERTY_NAME	"Raspi3ColourProperty"
 #define RGB_COLOUR_VALUETYPE		"wot:RGB_colour_JSON"
-#define RGB_FREQ_PROPERTY_UUID	"wot:RGBfreqProperty"
-#define RGB_FREQ_PROPERTY_NAME	"Raspi3FreqProperty"
-#define RGB_FREQ_VALUETYPE		"wot:RGB_freq_JSON"
+#define RGB_FREQ_PROPERTY_UUID		"wot:RGBfreqProperty"
+#define RGB_FREQ_PROPERTY_NAME		"Raspi3FreqProperty"
+#define RGB_FREQ_VALUETYPE			"wot:RGB_freq_JSON"
 
 
-#define PREFIX_WOT              "PREFIX wot:<http://www.arces.unibo.it/wot#> "
-#define PREFIX_RDF              "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-#define PREFIX_TD               "PREFIX td:<http://w3c.github.io/wot/w3c-wot-td-ontology.owl#> "
-#define PREFIX_DUL              "PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> "
-#define SEPA_SUBSCRIPTION_ADDRESS			"ws://192.168.0.1:9000/subscribe"
-#define SEPA_UPDATE_ADDRESS					"http://192.168.0.1:8000/update"
+#define PREFIX_WOT              	"PREFIX wot:<http://www.arces.unibo.it/wot#> "
+#define PREFIX_RDF              	"PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+#define PREFIX_TD               	"PREFIX td:<http://w3c.github.io/wot/w3c-wot-td-ontology.owl#> "
+#define PREFIX_DUL              	"PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> "
+
+#define SEPA_SUBSCRIPTION_ADDRESS	"ws://192.168.0.1:9000/subscribe"
+#define SEPA_UPDATE_ADDRESS			"http://192.168.0.1:8000/update"
+
+#define HIGH						1
+#define LOW							0
+#define KEEP_OLD_VALUE				-1
 
 typedef struct rgbf {
     int r,g,b,f;
@@ -91,25 +93,25 @@ void BlinkHandler(int sig) {
 
 void blink_process() {
 	int data_read;
-    rgbf input={.r=0,.g=0,.b=0,.f=0};
+    rgbf input={.r=LOW,.g=LOW,.b=LOW,.f=LOW};
     while (1) {
         if (new_data) {
 			logD("Got new values! r=%d,g=%d,b=%d,f=%d\n",newData.r,newData.g,newData.b,newData.f);
 			new_data = 0;
-			if (newData.r!=-1) input.r=newData.r;
-			if (newData.g!=-1) input.g=newData.g;
-			if (newData.b!=-1) input.b=newData.b;
-			if (newData.f!=-1) input.f=newData.f;
+			if (newData.r!=KEEP_OLD_VALUE) input.r=newData.r;
+			if (newData.g!=KEEP_OLD_VALUE) input.g=newData.g;
+			if (newData.b!=KEEP_OLD_VALUE) input.b=newData.b;
+			if (newData.f!=KEEP_OLD_VALUE) input.f=newData.f;
 		}
 		if (input.f>0) {
-			if (input.r==1) digitalWrite(R_PIN,1);
-			if (input.g==1) digitalWrite(G_PIN,1);
-			if (input.b==1) digitalWrite(B_PIN,1);
-			usleep(500000/input.f);
-			if (input.r==1) digitalWrite(R_PIN,0);
-			if (input.g==1) digitalWrite(G_PIN,0);
-			if (input.b==1) digitalWrite(B_PIN,0);
-			usleep(500000/input.f);
+			if (input.r==HIGH) digitalWrite(R_PIN,HIGH);
+			if (input.g==HIGH) digitalWrite(G_PIN,HIGH);
+			if (input.b==HIGH) digitalWrite(B_PIN,HIGH);
+			usleep(uHALF_SECOND/input.f);
+			if (input.r==HIGH) digitalWrite(R_PIN,LOW);
+			if (input.g==HIGH) digitalWrite(G_PIN,LOW);
+			if (input.b==HIGH) digitalWrite(B_PIN,LOW);
+			usleep(uHALF_SECOND/input.f);
 		}
 		else {
 			digitalWrite(R_PIN,input.r);
@@ -122,27 +124,24 @@ void blink_process() {
 
 void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,int removedlen) {
 	int i,o;
-	char updateSPARQL[500];
-	rgbf newColour = {.r=-1,.g=-1,.b=-1,.f=-1};
+	char updateSPARQL[1000];
+	rgbf newColour = {.r=KEEP_OLD_VALUE,.g=KEEP_OLD_VALUE,.b=KEEP_OLD_VALUE,.f=KEEP_OLD_VALUE};
 	if (added!=NULL) {
 		if (addedlen>1) printf("%d new requested detected.\n On the screen only the last will be shown.\n",addedlen);
 		else printf("New request detected!\n!");
 		for (i=0; i<addedlen; i++) {
 			if (!strcmp(added[i].bindingName,"value")) {
 				sscanf(added[i].value,"{\\\"r\\\":%d,\\\"g\\\":%d,\\\"b\\\":%d}",&(newColour.r),&(newColour.g),&(newColour.b));
-                //printf("BlinkHandler! %d %d %d %d\n",newColour.r,newColour.g,newColour.b,newColour.f);
-                //pthread_mutex_lock(&(subClient->subscription_mutex));
 				write(pipeFD[1],&newColour,sizeof(rgbf));
 				kill(blink_pid,SIGUSR1);
-				//pthread_mutex_unlock(&(subClient->subscription_mutex));
-				
+
                 // updates on the sepa the property value
-                //sprintf(updateSPARQL,PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_COLOUR_VALUETYPE " dul:hasDataValue ?oldValue} INSERT { " RGB_COLOUR_VALUETYPE " dul:hasDataValue '{\"r\":%d,\"g\":%d,\"b\":%d}'} WHERE { " RGB_COLOUR_PROPERTY_UUID " rdf:type td:Property. " RGB_COLOUR_PROPERTY_UUID " td:isWritable 'true'. " RGB_COLOUR_PROPERTY_UUID " td:hasValueType " RGB_COLOUR_VALUETYPE " }",newColour.r,newColour.g,newColour.b);
-                //o=kpProduce(updateSPARQL,SEPA_UPDATE_ADDRESS,NULL);
-				//if (o!=HTTP_200_OK) logE("Property " RGB_COLOUR_PROPERTY_UUID " update error\n");
+                sprintf(updateSPARQL,PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_COLOUR_VALUETYPE " dul:hasDataValue ?oldValue} INSERT { " RGB_COLOUR_VALUETYPE " dul:hasDataValue '{\"r\":%d,\"g\":%d,\"b\":%d}'} WHERE { " RGB_COLOUR_PROPERTY_UUID " rdf:type td:Property. " RGB_COLOUR_PROPERTY_UUID " td:isWritable 'true'. " RGB_COLOUR_PROPERTY_UUID " td:hasValueType " RGB_COLOUR_VALUETYPE " }",newColour.r,newColour.g,newColour.b);
+                o=kpProduce(updateSPARQL,SEPA_UPDATE_ADDRESS,NULL);
+				if (o!=HTTP_200_OK) logE("Property " RGB_COLOUR_PROPERTY_UUID " update error\n");
             }
 		}
-		fprintfSepaNodes(stdout,added,addedlen,"changeColorRequestNotification ");
+		//fprintfSepaNodes(stdout,added,addedlen,"changeColorRequestNotification ");
 		freeSepaNodes(added,addedlen);
 	}
 	printf("\n");
@@ -150,7 +149,7 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 
 void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,int removedlen) {
 	int i,o;
-	char updateSPARQL[500];
+	char updateSPARQL[1000];
 	rgbf newFrequency = {.r=-1,.g=-1,.b=-1,.f=-1};
 	if (added!=NULL) {
 		if (addedlen>1) printf("%d new requested detected.\n On the screen only the last will be shown.\n",addedlen);
@@ -161,16 +160,13 @@ void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode *
 			printf("ma qui non scrive niente? --> %d %s %s\n",i,added[i].bindingName,added[i].value);
 			if (!strcmp(added[i].bindingName,"value")) {
 				sscanf(added[i].value,"{\\\"frequency\\\":%d}",&(newFrequency.f));
-				printf("\t NEW FREQUENCY FOUND: %d\n",newFrequency.f);
-				//pthread_mutex_lock(&(subClient->subscription_mutex));
 				write(pipeFD[1],&newFrequency,sizeof(rgbf));
 				kill(blink_pid,SIGUSR1);
-				//pthread_mutex_unlock(&(subClient->subscription_mutex));
 				
 				// updates on the sepa the property value
-                //sprintf(updateSPARQL,PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_FREQ_VALUETYPE " dul:hasDataValue ?oldValue} INSERT { " RGB_FREQ_VALUETYPE " dul:hasDataValue '{\"frequency\":%d}'} WHERE { " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property. " RGB_FREQ_PROPERTY_UUID " td:isWritable 'true'. " RGB_FREQ_PROPERTY_UUID " td:hasValueType " RGB_FREQ_VALUETYPE " }",newFrequency.f);
-                //o=kpProduce(updateSPARQL,SEPA_UPDATE_ADDRESS,NULL);
-				//if (o!=HTTP_200_OK) logE("Property " RGB_FREQ_PROPERTY_UUID " update error\n");
+                sprintf(updateSPARQL,PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_FREQ_VALUETYPE " dul:hasDataValue ?oldValue} INSERT { " RGB_FREQ_VALUETYPE " dul:hasDataValue '{\"frequency\":%d}'} WHERE { " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property. " RGB_FREQ_PROPERTY_UUID " td:isWritable 'true'. " RGB_FREQ_PROPERTY_UUID " td:hasValueType " RGB_FREQ_VALUETYPE " }",newFrequency.f);
+                o=kpProduce(updateSPARQL,SEPA_UPDATE_ADDRESS,NULL);
+				if (o!=HTTP_200_OK) logE("Property " RGB_FREQ_PROPERTY_UUID " update error\n");
             }
 		}
 		//fprintfSepaNodes(stdout,added,addedlen,"changeFrequencyRequestNotification ");
