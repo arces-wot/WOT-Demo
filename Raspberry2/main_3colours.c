@@ -128,7 +128,7 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 		else printf("New request detected!\n!");
 		for (i=0; i<addedlen; i++) {
 			if (!strcmp(added[i].bindingName,"value")) {
-				sscanf(added[i].value,"{\"r\":%d,\"g\":%d,\"b\":%d}",&(newColour.r),&(newColour.g),&(newColour.b));
+				sscanf(added[i].value,"{\\\"r\\\":%d,\\\"g\\\":%d,\\\"b\\\":%d}",&(newColour.r),&(newColour.g),&(newColour.b));
                 printf("BlinkHandler! %d %d %d %d\n",newColour.r,newColour.g,newColour.b,newColour.f);
                 //pthread_mutex_lock(&(subClient->subscription_mutex));
 				write(pipeFD[1],&newColour,sizeof(rgbf));
