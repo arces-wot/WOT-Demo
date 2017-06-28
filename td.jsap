@@ -192,11 +192,15 @@
     		?eOldOutput dul:hasDataValue ?oldValue} 
     		INSERT {?event wot:hasInstance ?newInstance. 
     		?newInstance rdf:type wot:EventInstance. 
+    		?newInstance wot:isGeneratedBy ?thing .
     		?newInstance wot:hasTimeStamp ?time .
     		?newInstance td:hasOutput ?eNewOutput.
     		?eNewOutput rdf:type ?dataTypeURI.
-    		?eNewOutput dul:hasDataValue ?newValue} 
-    		WHERE {BIND(now() AS ?time) . ?event rdf:type td:Event. 
+    		?eNewOutput dul:hasDataValue ?value} 
+    		WHERE {BIND(now() AS ?time) . 
+    		BIND(concat('wot:Event_',STRUUID()) AS ?newInstance) .
+    		BIND(concat('wot:Output_',STRUUID()) AS ?eNewOutput) .
+    		?event rdf:type td:Event. 
     		OPTIONAL {?event wot:hasInstance ?oldInstance. 
     		?oldInstance rdf:type wot:EventInstance. 
     		?oldInstance wot:hasTimeStamp ?eOldTimeStamp.
@@ -204,6 +208,10 @@
     		?eOldOutput rdf:type ?dataTypeURI.
     		?eOldOutput dul:hasDataValue ?oldValue}}",
 				"forcedBindings": {
+					"thing": {
+						"type": "uri",
+						"value": ""
+					},
 					"event": {
 						"type": "uri",
 						"value": ""
@@ -212,15 +220,7 @@
 						"type": "uri",
 						"value": ""
 					},
-					"newInstance": {
-						"type": "uri",
-						"value": ""
-					},
-					"eNewOutput": {
-						"type": "uri",
-						"value": ""
-					},
-					"newValue": {
+					"value": {
 						"type": "literal",
 						"value": ""
 					}
@@ -233,16 +233,14 @@
     		INSERT {?event wot:hasInstance ?newInstance. 
     		?newInstance rdf:type wot:EventInstance. 
     		?newInstance wot:hasTimeStamp ?time} 
-    		WHERE {BIND(now() AS ?time) . ?event rdf:type td:Event. 
+    		WHERE {BIND(now() AS ?time) . 
+    		BIND(concat('wot:Event_',STRUUID()) AS ?newInstance) .
+    		?event rdf:type td:Event. 
     		OPTIONAL {?event wot:hasInstance ?oldInstance. 
     		?oldInstance rdf:type wot:EventInstance. 
     		?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",
 				"forcedBindings": {
 					"event": {
-						"type": "uri",
-						"value": ""
-					},
-					"newInstance": {
 						"type": "uri",
 						"value": ""
 					}
@@ -260,8 +258,11 @@
     		?newInstance wot:hasTimeStamp ?time. 
     		?newInstance td:hasInput ?newInput. 
     		?newInput rdf:type ?dataTypeURI.
-    		?newInput dul:hasDataValue ?newValue} 
-    		WHERE {BIND(now() AS ?time) . ?action rdf:type td:Action. 
+    		?newInput dul:hasDataValue ?value} 
+    		WHERE {BIND(now() AS ?time) . 
+    		BIND(concat('wot:Event_',STRUUID()) AS ?newInstance) .
+    		BIND(concat('wot:Input_',STRUUID()) AS ?newInput) .
+    		?action rdf:type td:Action. 
     		OPTIONAL{?action wot:hasInstance ?oldInstance. 
     		?oldInstance rdf:type wot:ActionInstance. 
     		?oldInstance wot:hasTimeStamp ?aOldTimeStamp. 
@@ -273,19 +274,11 @@
 						"type": "uri",
 						"value": ""
 					},
-					"newInstance": {
-						"type": "uri",
-						"value": ""
-					},
 					"dataTypeURI": {
 						"type": "uri",
 						"value": ""
 					},
-					"newInput": {
-						"type": "uri",
-						"value": ""
-					},
-					"newValue": {
+					"value": {
 						"type": "literal",
 						"value": ""
 					}
@@ -298,7 +291,9 @@
     		INSERT {?action wot:hasInstance ?newInstance. 
     		?newInstance rdf:type wot:ActionInstance. 
     		?newInstance wot:hasTimeStamp ?time} 
-    		WHERE {BIND(now() AS ?time) . ?action rdf:type td:Action. 
+    		WHERE {BIND(now() AS ?time) . 
+    		BIND(concat('wot:Event_',STRUUID()) AS ?newInstance) . 
+    		?action rdf:type td:Action. 
     		OPTIONAL{?action wot:hasInstance ?oldInstance. 
     		?oldInstance rdf:type wot:ActionInstance. 
     		?oldInstance wot:hasTimeStamp ?aOldTimeStamp}}",
@@ -306,21 +301,17 @@
 					"action": {
 						"type": "uri",
 						"value": ""
-					},
-					"newInstance": {
-						"type": "uri",
-						"value": ""
 					}
 				}
 			},
 			"PROPERTY_VALUE_UPDATE": {
-				"sparql": "DELETE { ?valueType dul:hasDataValue ?oldValue} INSERT { ?valueType dul:hasDataValue ?newValue} WHERE { ?property rdf:type td:Property. ?property td:isWritable 'true'. ?property td:hasValueType ?valueType }",
+				"sparql": "DELETE { ?valueType dul:hasDataValue ?oldValue} INSERT { ?valueType dul:hasDataValue ?value} WHERE { ?property rdf:type td:Property. ?property td:isWritable 'true'. ?property td:hasValueType ?valueType }",
 				"forcedBindings": {
 					"valueType": {
 						"type": "uri",
 						"value": ""
 					},
-					"newValue": {
+					"value": {
 						"type": "literal",
 						"value": ""
 					},
