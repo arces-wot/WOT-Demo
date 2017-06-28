@@ -159,10 +159,10 @@ void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode *
 		for (i=0; i<addedlen; i++) {
 			if (!strcmp(added[i].bindingName,"value")) {
 				sscanf(added[i].value,"{\\\"frequency\\\":%d}",&(newFrequency.f));
-				
+				printf("\t NEW FREQUENCY FOUND: %d\n",newFrequency.f);
 				//pthread_mutex_lock(&(subClient->subscription_mutex));
-				kill(blink_pid,SIGUSR1);
 				write(pipeFD[1],&newFrequency,sizeof(rgbf));
+				kill(blink_pid,SIGUSR1);
 				//pthread_mutex_unlock(&(subClient->subscription_mutex));
 				
 				// updates on the sepa the property value
