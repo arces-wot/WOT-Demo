@@ -91,7 +91,7 @@ void blink_process() {
     rgbf input={.r=0,.g=0,.b=0,.f=0};
     while (1) {
         if (new_data) {
-			printf("Got new values! r=%d,g=%d,b=%d,f=%d\n",new.r,new.g,new.b,new.f);
+			printf("Got new values! r=%d,g=%d,b=%d,f=%d\n",newData.r,newData.g,newData.b,newData.f);
 			new_data = 0;
 			if (new.r!=-1) input.r=new.r;
 			if (new.g!=-1) input.g=new.g;
