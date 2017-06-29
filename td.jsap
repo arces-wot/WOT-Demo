@@ -94,7 +94,9 @@
 			"ADD_ACTION": {
 				"sparql": "INSERT {?thing td:hasAction ?actionUUID. 
     			?actionUUID rdf:type td:Action. 
-    			?actionUUID td:hasName ?actionUUIDName}
+    			?actionUUID td:hasName ?actionUUIDName.
+			?actionUUID td:hasInput ?inputType .
+			?inputType rdf:type dul:InformationObject }
     			WHERE {?thing rdf:type td:Thing}",
 				"forcedBindings": {
 					"thing": {
