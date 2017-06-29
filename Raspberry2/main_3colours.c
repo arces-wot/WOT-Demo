@@ -22,13 +22,13 @@
  * This code is made for the W3C Web Of Things Plugfest in Dusseldorf (July 2017)
  * 24 june 2017
  *
-gcc main_3colours.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_consumer.c ../../../sepa-C-kpi/sepa_secure.c ../../../sepa-C-kpi/jsmn.c ../../../sepa-C-kpi/sepa_producer.c -o main_3colours -pthread -lcurl `pkg-config --cflags --libs glib-2.0 libwebsockets` -lwiringPi -lwiringPiDev
+gcc main_3colours.c ../../sepa-C-kpi/sepa_utilities.c ../../sepa-C-kpi/sepa_consumer.c ../../sepa-C-kpi/sepa_secure.c ../../sepa-C-kpi/jsmn.c ../../sepa-C-kpi/sepa_producer.c -o main_3colours -pthread -lcurl `pkg-config --cflags --libs glib-2.0 libwebsockets` -lwiringPi -lwiringPiDev
  */
 
 #include <wiringPi.h>
 #include <unistd.h>
 #include <signal.h>
-#include "../../../sepa-C-kpi/sepa_aggregator.h"
+#include "../../sepa-C-kpi/sepa_aggregator.h"
 
 #define SEPA_LOGGER_ERROR
 //USE WIRINGPI PIN NUMBERS --> see https://it.pinout.xyz/pinout/wiringpi
