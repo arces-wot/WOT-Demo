@@ -17,16 +17,16 @@
      "td": "http://www.w3.org/ns/td#"
   },
   "@type": "td:Thing",
-  "name": "rfidReader",
+  "name": "RFIDReader",
   "interactions": [
     {
       "@type": ["td:Event","wot:Ping"],
-      "name": "ping",
+      "name": "Ping",
       "outputData": {"valueType": { "type": "string" }}
     },
     {
       "@type": ["td:Event","wot:RFIDReading"],
-      "name": "rfidReading",
+      "name": "RFIDReading",
       "outputData": {"valueType": { "type": "string" }}
     }
   ]
