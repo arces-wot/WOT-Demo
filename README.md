@@ -24,8 +24,8 @@
       "name": "Ping"
     },
     {
-      "@type": ["td:Event","wot:RFIDTagsChanged"],
-      "name": "RFIDTagsChanged",
+      "@type": ["td:Event","wot:TagsPollChanged"],
+      "name": "TagsPollChanged",
       "outputData": {"valueType": { "type": "string" }}
     }
   ]
