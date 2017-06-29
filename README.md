@@ -14,21 +14,19 @@
   "@context":
   {
      "wot": "http://wot.arces.unibo.it/sepa#",
-     "td": "http://www.w3.org/ns/td#",
-     "time" : "http://www.w3.org/2006/time#"
+     "td": "http://www.w3.org/ns/td#"
   },
   "@type": "td:Thing",
   "name": "RFIDReader",
   "interactions": [
     {
       "@type": ["td:Event","wot:Ping"],
-      "name": "Ping",
-      "outputData": {"valueType": { "type": "time:GeneralDateTimeDescription" }}
+      "name": "Ping"
     },
     {
       "@type": ["td:Event","wot:RFIDTagsChanged"],
       "name": "RFIDTagsChanged",
-      "outputData": {"valueType": { "type": "wot:RFIDReading" }}
+      "outputData": {"valueType": { "type": "string" }}
     }
   ]
 }
