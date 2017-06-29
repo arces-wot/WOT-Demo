@@ -22,13 +22,13 @@
  * This code is made for the W3C Web Of Things Plugfest in Dusseldorf (July 2017)
  * 24 june 2017
  *
-gcc main_3colours.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_consumer.c ../../../sepa-C-kpi/sepa_secure.c ../../../sepa-C-kpi/jsmn.c ../../../sepa-C-kpi/sepa_producer.c -o main_3colours -pthread -lcurl `pkg-config --cflags --libs glib-2.0 libwebsockets` -lwiringPi -lwiringPiDev
+gcc main_3colours.c ../../sepa-C-kpi/sepa_utilities.c ../../sepa-C-kpi/sepa_consumer.c ../../sepa-C-kpi/sepa_secure.c ../../sepa-C-kpi/jsmn.c ../../sepa-C-kpi/sepa_producer.c -o main_3colours -pthread -lcurl `pkg-config --cflags --libs glib-2.0 libwebsockets` -lwiringPi -lwiringPiDev
  */
 
 #include <wiringPi.h>
 #include <unistd.h>
 #include <signal.h>
-#include "../../../sepa-C-kpi/sepa_aggregator.h"
+#include "../../sepa-C-kpi/sepa_aggregator.h"
 
 #define SEPA_LOGGER_ERROR
 //USE WIRINGPI PIN NUMBERS --> see https://it.pinout.xyz/pinout/wiringpi
@@ -127,7 +127,7 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 	char updateSPARQL[1000];
 	rgbf newColour = {.r=KEEP_OLD_VALUE,.g=KEEP_OLD_VALUE,.b=KEEP_OLD_VALUE,.f=KEEP_OLD_VALUE};
 	if (added!=NULL) {
-		if (addedlen>1) printf("%d new requested detected.\n On the screen only the last will be shown.\n",addedlen);
+		if (addedlen>1) printf("%d new request detected. On the screen only the last will be shown.\n",addedlen);
 		else printf("New request detected!\n!");
 		for (i=0; i<addedlen; i++) {
 			if (!strcmp(added[i].bindingName,"value")) {
@@ -152,12 +152,9 @@ void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode *
 	char updateSPARQL[1000];
 	rgbf newFrequency = {.r=-1,.g=-1,.b=-1,.f=-1};
 	if (added!=NULL) {
-		if (addedlen>1) printf("%d new requested detected.\n On the screen only the last will be shown.\n",addedlen);
+		if (addedlen>1) printf("%d new request detected. On the screen only the last will be shown.\n",addedlen);
 		else printf("New request detected!\n!");
-		fprintfSepaNodes(stdout,added,addedlen,"changeFrequencyRequestNotification ");
-		printf("addedlen=%d\n",addedlen);
 		for (i=0; i<addedlen; i++) {
-			printf("ma qui non scrive niente? --> %d %s %s\n",i,added[i].bindingName,added[i].value);
 			if (!strcmp(added[i].bindingName,"value")) {
 				sscanf(added[i].value,"{\\\"frequency\\\":%d}",&(newFrequency.f));
 				write(pipeFD[1],&newFrequency,sizeof(rgbf));
@@ -303,5 +300,5 @@ int main(int argc, char **argv) {
     kill(blink_pid,SIGKILL);
     sepa_subscriber_destroy();
 
-	return EXIT_FAILURE;
+	return EXIT_SUCCESS;
 }
