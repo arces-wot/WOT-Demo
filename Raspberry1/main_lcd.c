@@ -1,5 +1,5 @@
 /*
- * raspberry_wot_lcd.c
+ * main_lcd.c
  *
  * Copyright 2017 Francesco Antoniazzi <francesco.antoniazzi@unibo.it>
  *
@@ -20,7 +20,7 @@
  *
  *
  * This code is made for the W3C Web Of Things Plugfest in Dusseldorf (July 2017)
- * 14 june 2017
+ * 29 june 2017
  *
 gcc main_lcd.c ../../sepa-C-kpi/sepa_producer.c ../../sepa-C-kpi/sepa_utilities.c ../../sepa-C-kpi/sepa_consumer.c ../../sepa-C-kpi/sepa_secure.c ../../sepa-C-kpi/jsmn.c -o main_lcd -pthread -lcurl `pkg-config --cflags --libs glib-2.0 libwebsockets` -lwiringPi -lwiringPiDev
  */
@@ -52,6 +52,7 @@ gcc main_lcd.c ../../sepa-C-kpi/sepa_producer.c ../../sepa-C-kpi/sepa_utilities.
 #define LCD_HEART_NAME          "Raspi16x2LCDAlive"
 #define LCD_WRITEACTION         "wot:LCDWriteAction"
 #define LCD_WRITEACTION_NAME    "Raspi16x2LCD_Write"
+#define LCD_WRITEACTION_INPUT_TYPE "wot:LCDWriteActionInputType"
 
 #define PREFIX_WOT              "PREFIX wot:<http://www.arces.unibo.it/wot#> "
 #define PREFIX_RDF              "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
@@ -77,7 +78,7 @@ void actionRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,
 		for (i=0; i<addedlen; i++) {
 			if (!strcmp(added[i].bindingName,"value")) {
 				lcdPosition(lcd,0,0);
-				lcdPuts(lcd,"                               ");
+				lcdClear(lcd);
 				lcdPosition(lcd,0,0);
 				lcdPuts(lcd,added[i].value);
             }
@@ -110,24 +111,20 @@ int main(int argc, char **argv) {
     http_client_init();
 
 	// insert thing description
-	o=kpProduce(
-             PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE {" THING_UUID " wot:isDiscoverable ?oldDiscoverable. " THING_UUID " dul:hasLocation ?oldThingLocation} INSERT {" THING_UUID " rdf:type td:Thing. " THING_UUID " td:hasName '" THING_NAME "'. " THING_UUID " wot:isDiscoverable 'true'. " THING_UUID " dul:hasLocation " LOCATION_UUID "} WHERE {OPTIONAL{" THING_UUID " rdf:type td:Thing. " THING_UUID " dul:hasLocation ?oldThingLocation. " THING_UUID " wot:isDiscoverable ?oldDiscoverable. ?oldThingLocation rdf:type dul:PhysicalPlace}. " LOCATION_UUID " rdf:type dul:PhysicalPlace}"
-             ,SEPA_UPDATE_ADDRESS,NULL);
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " THING_UUID " wot:isDiscoverable ?oldDiscoverable} INSERT { " THING_UUID " rdf:type td:Thing. " THING_UUID " td:hasName " THING_NAME ". " THING_UUID " wot:isDiscoverable 'true'} WHERE {OPTIONAL { " THING_UUID " rdf:type td:Thing. " THING_UUID " wot:isDiscoverable ?oldDiscoverable }}",SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
         logE("Thing Description insert update error in " THING_UUID "\n");
         return EXIT_FAILURE;
     }
     // declare Action LCDWrite
-    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasAction " LCD_WRITEACTION ". " LCD_WRITEACTION " rdf:type td:Action. " LCD_WRITEACTION " td:hasName '" LCD_WRITEACTION_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
-                ,SEPA_UPDATE_ADDRESS,NULL);
+    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasAction " LCD_WRITEACTION ". " LCD_WRITEACTION " rdf:type td:Action. " LCD_WRITEACTION " td:hasName '" LCD_WRITEACTION_NAME "'. " LCD_WRITEACTION " td:hasInput " LCD_WRITEACTION_INPUT_TYPE ". " LCD_WRITEACTION_INPUT_TYPE " rdf:type dul:InformationObject}	WHERE { " LCD_WRITEACTION " rdf:type td:Thing}",SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
         logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
         return EXIT_FAILURE;
     }
 
     // declare Event HeartBeat
-    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasEvent " LCD_HEART ". " LCD_HEART " rdf:type td:Event. " LCD_HEART " td:hasName '" LCD_HEART_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
-               ,SEPA_UPDATE_ADDRESS,NULL);
+    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasEvent " LCD_HEART ". " LCD_HEART " rdf:type td:Event. " LCD_HEART " td:hasName '" LCD_HEART_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}",SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
         logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
         return EXIT_FAILURE;
