@@ -12,74 +12,28 @@
 
 <pre class="example" title="More Capabilities">
 {
-  "@context": [
-    "http://w3c.github.io/wot/w3c-wot-td-context.jsonld",
-    { "actuator": "http://example.org/actuator#" }
-  ],
+  "@context":
+  {
+     "wot": "http://wot.arces.unibo.it/sepa#",
+			"rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+			"dul": "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
+			"ire": "http://w3c.github.io/wot/w3c-wot-td-ire.owl#",
+			"rdfs": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+			"td": "http://w3c.github.io/wot/w3c-wot-td-ontology.owl#"
+  },
   "@type": "Thing",
-  "name": "MyLEDThing",
-  "base": "coap://myled.example.com:5683/",
-  "security": {
-      "cat": "token:jwt",
-      "alg": "HS256",
-      "as": "https://authority-issuing.example.org"
-    },
+  "name": "wot:RFIDReader",
   "interactions": [
     {
-      "@type": ["Property","actuator:onOffStatus"],
-      "name": "status",
-      "outputData": {"valueType": { "type": "boolean" }},
-      "writable": true,
-      "links": [{
-        "href" : "pwr", 
-        "mediaType": "application/exi" 
-      },
-      {
-        "href" : "http://mytemp.example.com:8080/status",
-        "mediaType": "application/json"
-      }]
+      "@type": ["Event","wot:Ping"],
+      "name": "ping",
+      "outputData": {"valueType": { "type": "string" }}
     },
     {
-      "@type": ["Action","actuator:fadeIn"],
-      "name": "fadeIn",
-      "inputData": {
-        "valueType": { "type": "integer" },
-        "actuator:unit": "actuator:ms"
-      },
-      "links": [{
-        "href" : "in", 
-        "mediaType": "application/exi" 
-      },
-      {
-        "href" : "http://mytemp.example.com:8080/in",
-        "mediaType": "application/json"
-      }]                  
-    },
-    {
-      "@type": ["Action","actuator:fadeOut"],
-      "name": "fadeOut",
-      "inputData": {
-        "valueType": { "type": "integer" },
-        "actuator:unit": "actuator:ms"
-      },
-      "links": [{
-        "href" : "out", 
-        "mediaType": "application/exi" 
-      },
-      {
-        "href" : "http://mytemp.example.com:8080/out",
-        "mediaType": "application/json"
-      }]                  
-    },
-    {
-      "@type": ["Event","actuator:alert"],
-      "name": "criticalCondition",
-      "outputData": {"valueType": { "type": "string" }},
-      "links": [{
-              "href" : "ev",
-              "mediaType": "application/exi"
-            }]  
+      "@type": ["Event","wot:RFIDReading"],
+      "name": "RFIDReading",
+      "outputData": {"valueType": { "type": "string" }}
     }
   ]
 }
-    </pre>
+</pre>
