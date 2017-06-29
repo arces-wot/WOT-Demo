@@ -9,7 +9,7 @@
 # Web Thing Descriptions
 
 ## RFID Reader
-
+```json
 {
   "@context":
   {
@@ -31,3 +31,4 @@
     }
   ]
 }
+```
