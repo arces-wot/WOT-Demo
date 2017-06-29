@@ -14,7 +14,8 @@
   "@context":
   {
      "wot": "http://wot.arces.unibo.it/sepa#",
-     "td": "http://www.w3.org/ns/td#"
+     "td": "http://www.w3.org/ns/td#",
+     "time" : "http://www.w3.org/2006/time#"
   },
   "@type": "td:Thing",
   "name": "RFIDReader",
@@ -22,7 +23,7 @@
     {
       "@type": ["td:Event","wot:Ping"],
       "name": "Ping",
-      "outputData": {"valueType": { "type": "wot:Timestamp" }}
+      "outputData": {"valueType": { "type": "time:GeneralDateTimeDescription" }}
     },
     {
       "@type": ["td:Event","wot:RFIDTagsChanged"],
