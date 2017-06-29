@@ -6,6 +6,6 @@
 3. REED
 4. Multicolor LED
 
-# Web Things Descriptions
+# Web Thing Descriptions
 
 
