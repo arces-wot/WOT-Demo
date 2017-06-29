@@ -233,8 +233,10 @@
 			"POST_NEW_EVENT_WITHOUT_OUTPUT": {
 				"sparql": "DELETE {?event wot:hasInstance ?oldInstance. 
     		?oldInstance rdf:type wot:EventInstance. 
+    		?oldInstance wot:isGeneratedBy ?thing .
     		?oldInstance wot:hasTimeStamp ?eOldTimeStamp} 
     		INSERT {?event wot:hasInstance ?newInstance. 
+    		?newInstance wot:isGeneratedBy ?thing .
     		?newInstance rdf:type wot:EventInstance. 
     		?newInstance wot:hasTimeStamp ?time} 
     		WHERE {BIND(now() AS ?time) . 
@@ -242,9 +244,14 @@
     		?event rdf:type td:Event. 
     		OPTIONAL {?event wot:hasInstance ?oldInstance. 
     		?oldInstance rdf:type wot:EventInstance. 
+    		?oldInstance wot:isGeneratedBy ?thing .
     		?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",
 				"forcedBindings": {
 					"event": {
+						"type": "uri",
+						"value": ""
+					},
+					"thing": {
 						"type": "uri",
 						"value": ""
 					}
