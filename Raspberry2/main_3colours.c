@@ -20,7 +20,7 @@
  *
  *
  * This code is made for the W3C Web Of Things Plugfest in Dusseldorf (July 2017)
- * 24 june 2017
+ * 29 june 2017
  *
 gcc main_3colours.c ../../sepa-C-kpi/sepa_utilities.c ../../sepa-C-kpi/sepa_consumer.c ../../sepa-C-kpi/sepa_secure.c ../../sepa-C-kpi/jsmn.c ../../sepa-C-kpi/sepa_producer.c -o main_3colours -pthread -lcurl `pkg-config --cflags --libs glib-2.0 libwebsockets` -lwiringPi -lwiringPiDev
  */
@@ -45,8 +45,10 @@ gcc main_3colours.c ../../sepa-C-kpi/sepa_utilities.c ../../sepa-C-kpi/sepa_cons
 #define RGB_HEART_NAME          	"Raspi3ColourAlive"
 #define RGB_COLOURACTION        	"wot:ChangeColourAction"
 #define RGB_COLOURACTION_NAME   	"ChangeRGBLedColour"
+#define RGB_COLOUR_INPUT_TYPE		"wot:ChangeRGBColourInputType"
 #define RGB_FREQ_ACTION         	"wot:ChangeFrequencyAction"
 #define RGB_FREQ_ACTION_NAME    	"ChangeRGBBlinkFrequency"
+#define RGB_FREQ_INPUT_TYPE			"wot:ChangeRGBBlinkInputType"
 #define RGB_COLOUR_PROPERTY_UUID	"wot:RGBcolourProperty"
 #define RGB_COLOUR_PROPERTY_NAME	"Raspi3ColourProperty"
 #define RGB_COLOUR_VALUETYPE		"wot:RGB_colour_JSON"
@@ -174,8 +176,6 @@ void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode *
 
 int main(int argc, char **argv) {
 	int o;
-	char lcdHBInstance[50] = "";
-	char HBEventUpdate[1000] = "";
 	unsigned int count = 0;
 	SEPA_subscription_params colour_action_subscription = _initSubscription();
 	SEPA_subscription_params freq_action_subscription = _initSubscription();
@@ -191,30 +191,26 @@ int main(int argc, char **argv) {
     http_client_init();
 
 	// insert thing description
-	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE {" THING_UUID " wot:isDiscoverable ?oldDiscoverable. " THING_UUID " dul:hasLocation ?oldThingLocation} INSERT {" THING_UUID " rdf:type td:Thing. " THING_UUID " td:hasName '" THING_NAME "'. " THING_UUID " wot:isDiscoverable 'true'. " THING_UUID " dul:hasLocation " LOCATION_UUID "} WHERE {OPTIONAL{" THING_UUID " rdf:type td:Thing. " THING_UUID " dul:hasLocation ?oldThingLocation. " THING_UUID " wot:isDiscoverable ?oldDiscoverable. ?oldThingLocation rdf:type dul:PhysicalPlace}. " LOCATION_UUID " rdf:type dul:PhysicalPlace}"
-             ,SEPA_UPDATE_ADDRESS,NULL);
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE {" THING_UUID " wot:isDiscoverable ?oldDiscoverable} INSERT {" THING_UUID " rdf:type td:Thing. " THING_UUID " td:hasName '" THING_NAME "'. " THING_UUID " wot:isDiscoverable 'true'} WHERE {OPTIONAL{" THING_UUID " rdf:type td:Thing. " THING_UUID " wot:isDiscoverable ?oldDiscoverable}}",SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
         logE("Thing Description insert update error in " THING_UUID "\n");
         return EXIT_FAILURE;
     }
     // declare Action RGB Colour modifier
-    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasAction " RGB_COLOURACTION ". " RGB_COLOURACTION " rdf:type td:Action. " RGB_COLOURACTION " td:hasName '" RGB_COLOURACTION_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
-                ,SEPA_UPDATE_ADDRESS,NULL);
+    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasAction " RGB_COLOURACTION ". " RGB_COLOURACTION " rdf:type td:Action. " RGB_COLOURACTION " td:hasName '" RGB_COLOURACTION_NAME "'. " RGB_COLOURACTION " td:hasInput " RGB_COLOUR_INPUT_TYPE ". " RGB_COLOUR_INPUT_TYPE " rdf:type dul:InformationObject} WHERE { " THING_UUID " rdf:type td:Thing}",SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
         logE("Action " RGB_COLOURACTION_NAME " insert error\n");
         return EXIT_FAILURE;
     }
      // declare Action RGB frequency modifier
-    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasAction " RGB_FREQ_ACTION ". " RGB_FREQ_ACTION " rdf:type td:Action. " RGB_FREQ_ACTION " td:hasName '" RGB_FREQ_ACTION_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
-                ,SEPA_UPDATE_ADDRESS,NULL);
+    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasAction " RGB_FREQ_ACTION ". " RGB_FREQ_ACTION " rdf:type td:Action. " RGB_FREQ_ACTION " td:hasName '" RGB_FREQ_ACTION_NAME "'. " RGB_FREQ_ACTION " td:hasInput " RGB_FREQ_INPUT_TYPE ". " RGB_FREQ_INPUT_TYPE " rdf:type dul:InformationObject} WHERE { " THING_UUID " rdf:type td:Thing}",SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
         logE("Action " RGB_FREQ_ACTION_NAME " insert error\n");
         return EXIT_FAILURE;
     }
 
     // declare Event HeartBeat
-	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasEvent " RGB_HEART ". " RGB_HEART " rdf:type td:Event. " RGB_HEART " td:hasName '" RGB_HEART_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}"
-				,SEPA_UPDATE_ADDRESS,NULL);
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasEvent " RGB_HEART ". " RGB_HEART " rdf:type td:Event. " RGB_HEART " td:hasName '" RGB_HEART_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}",SEPA_UPDATE_ADDRESS,NULL);
 	if (o!=HTTP_200_OK) {
 		logE("Event " RGB_HEART_NAME " insert error\n");
 		return EXIT_FAILURE;
@@ -233,6 +229,19 @@ int main(int argc, char **argv) {
 				,SEPA_UPDATE_ADDRESS,NULL);
 	if (o!=HTTP_200_OK) {
 		logE("Thing Description " RGB_FREQ_PROPERTY_NAME " insert error\n");
+		return EXIT_FAILURE;
+	}
+	
+	// TODO append target properties!
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " RGB_COLOURACTION " td:forProperty " RGB_COLOUR_PROPERTY_UUID "} WHERE {{{" RGB_COLOURACTION " rdf:type td:Action} UNION {" RGB_COLOURACTION " rdf:type td:Event}}. " RGB_COLOUR_PROPERTY_UUID " rdf:type td:Property}",SEPA_UPDATE_ADDRESS,NULL);
+	if (o!=HTTP_200_OK) {
+		logE("Append forProperty to " RGB_COLOURACTION " error\n");
+		return EXIT_FAILURE;
+	}
+	
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " RGB_FREQ_ACTION " td:forProperty " RGB_FREQ_PROPERTY_UUID "} WHERE {{{" RGB_FREQ_ACTION " rdf:type td:Action} UNION {" RGB_FREQ_ACTION " rdf:type td:Event}}. " RGB_FREQ_PROPERTY_UUID " rdf:type td:Property}",SEPA_UPDATE_ADDRESS,NULL);
+	if (o!=HTTP_200_OK) {
+		logE("Append forProperty to " RGB_FREQ_ACTION " error\n");		
 		return EXIT_FAILURE;
 	}
 
@@ -260,9 +269,9 @@ int main(int argc, char **argv) {
     subClient = sepa_subscriber_init();
     // subscribe to RGB Colour action requests
     sepa_subscription_builder(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "SELECT ?instance ?input ?value WHERE { " RGB_COLOURACTION " rdf:type td:Action. " RGB_COLOURACTION " wot:hasInstance ?instance. ?instance rdf:type wot:ActionInstance. OPTIONAL {?instance td:hasInput ?input. ?input dul:hasDataValue ?value}}"
-              ,NULL,NULL,
-              SEPA_SUBSCRIPTION_ADDRESS,
-              &colour_action_subscription);
+				,NULL,NULL,
+				SEPA_SUBSCRIPTION_ADDRESS,
+				&colour_action_subscription);
     sepa_setSubscriptionHandlers(changeColorRequestNotification,NULL,&colour_action_subscription);
     fprintfSubscriptionParams(stdout,colour_action_subscription);
     kpSubscribe(&colour_action_subscription);
@@ -280,12 +289,7 @@ int main(int argc, char **argv) {
     signal(SIGINT, HeartBeatHandler);
     // HeartBeat continuous loop
     while (alive) {
-        sprintf(lcdHBInstance,"wot:3ColourHeartBeatEventInstance%u",count);
-        sprintf(HBEventUpdate,
-                PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT { " RGB_HEART " wot:hasInstance %s. %s rdf:type wot:EventInstance. %s wot:hasTimeStamp ?time} WHERE {BIND(now() AS ?time) . " RGB_HEART " rdf:type td:Event. OPTIONAL { " RGB_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",
-                lcdHBInstance,lcdHBInstance,lcdHBInstance);
-
-        o=kpProduce(HBEventUpdate,SEPA_UPDATE_ADDRESS,NULL);
+        o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " RGB_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy " THING_UUID ". ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT { " RGB_HEART " wot:hasInstance ?newInstance. ?newInstance wot:isGeneratedBy " THING_UUID ". ?newInstance rdf:type wot:EventInstance. ?newInstance wot:hasTimeStamp ?time} WHERE {BIND(now() AS ?time) . BIND(concat('wot:Event_',STRUUID()) AS ?newInstance) . " RGB_HEART " rdf:type td:Event. OPTIONAL { " RGB_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy " THING_UUID ". ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",SEPA_UPDATE_ADDRESS,NULL);
         if (o!=HTTP_200_OK) {
             logE("Thing Description heartbeat update error in " THING_UUID "\n");
             return EXIT_FAILURE;

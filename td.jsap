@@ -39,10 +39,6 @@
 					"thingName": {
 						"type": "literal",
 						"value": ""
-					},
-					"newThingLocation": {
-						"type": "uri",
-						"value": ""
 					}
 				}
 			},
@@ -106,6 +102,10 @@
 					"actionUUID": {
 						"type": "uri",
 						"value": ""
+					},
+					"inputType": {
+						"type":"uri",
+						"value":""
 					},
 					"actionUUIDName": {
 						"type": "literal",
