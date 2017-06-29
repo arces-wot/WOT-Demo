@@ -22,12 +22,12 @@
     {
       "@type": ["td:Event","wot:Ping"],
       "name": "Ping",
-      "outputData": {"valueType": { "type": "string" }}
+      "outputData": {"valueType": { "type": "wot:Timestamp" }}
     },
     {
-      "@type": ["td:Event","wot:RFIDReading"],
-      "name": "RFIDReading",
-      "outputData": {"valueType": { "type": "string" }}
+      "@type": ["td:Event","wot:RFIDTagsChanged"],
+      "name": "RFIDTagsChanged",
+      "outputData": {"valueType": { "type": "wot:RFIDReading" }}
     }
   ]
 }
