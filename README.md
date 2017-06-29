@@ -17,7 +17,7 @@
      "td": "http://www.w3.org/ns/td#"
   },
   "@type": "td:Thing",
-  "name": "RFIDReader",
+  "name": "RFID Reader",
   "interactions": [
     {
       "@type": ["td:Event","wot:Ping"],
