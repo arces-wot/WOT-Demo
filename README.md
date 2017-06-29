@@ -10,30 +10,24 @@
 
 ## RFID Reader
 
-<pre class="example" title="More Capabilities">
 {
   "@context":
   {
      "wot": "http://wot.arces.unibo.it/sepa#",
-     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-     "dul": "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
-     "ire": "http://w3c.github.io/wot/w3c-wot-td-ire.owl#",
-     "rdfs": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-     "td": "http://w3c.github.io/wot/w3c-wot-td-ontology.owl#"
+     "td": "http://www.w3.org/ns/td#"
   },
-  "@type": "Thing",
-  "name": "wot:RFIDReader",
+  "@type": "td:Thing",
+  "name": "rfidReader",
   "interactions": [
     {
-      "@type": ["Event","wot:Ping"],
+      "@type": ["td:Event","wot:Ping"],
       "name": "ping",
       "outputData": {"valueType": { "type": "string" }}
     },
     {
-      "@type": ["Event","wot:RFIDReading"],
-      "name": "RFIDReading",
+      "@type": ["td:Event","wot:RFIDReading"],
+      "name": "rfidReading",
       "outputData": {"valueType": { "type": "string" }}
     }
   ]
 }
-</pre>
