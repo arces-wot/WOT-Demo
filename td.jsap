@@ -383,15 +383,36 @@
 				}
 			},
 			"SUBSCRIBE_TO_EVENT": {
-				"sparql": "SELECT ?instance ?timeStamp ?eOutput ?outputValue
+				"sparql": "SELECT ?thing ?instance ?timeStamp ?eOutput ?outputValue
 			WHERE {?event rdf:type td:Event. 
 			?event wot:hasInstance ?instance. 
+			?instance wot:isGeneratedBy ?thing.
 			?instance rdf:type wot:EventInstance. 
 			?instance wot:hasTimeStamp ?timeStamp.
 			OPTIONAL {?instance td:hasOutput ?eOutput.
 			?eOutput dul:hasDataValue ?outputValue}}",
 				"forcedBindings": {
 					"event": {
+						"type": "uri",
+						"value": ""
+					}
+				}
+			},
+			"SUBSCRIBE_TO_THING_EVENT": {
+				"sparql": "SELECT ?instance ?timeStamp ?eOutput ?outputValue
+			WHERE {?event rdf:type td:Event. 
+			?event wot:hasInstance ?instance. 
+			?instance rdf:type wot:EventInstance. 
+			?instance wot:isGeneratedBy ?thing.
+			?instance wot:hasTimeStamp ?timeStamp.
+			OPTIONAL {?instance td:hasOutput ?eOutput.
+			?eOutput dul:hasDataValue ?outputValue}}",
+				"forcedBindings": {
+					"event": {
+						"type": "uri",
+						"value": ""
+					},
+					"thing": {
 						"type": "uri",
 						"value": ""
 					}
