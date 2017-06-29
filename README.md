@@ -15,11 +15,11 @@
   "@context":
   {
      "wot": "http://wot.arces.unibo.it/sepa#",
-			"rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-			"dul": "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
-			"ire": "http://w3c.github.io/wot/w3c-wot-td-ire.owl#",
-			"rdfs": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-			"td": "http://w3c.github.io/wot/w3c-wot-td-ontology.owl#"
+     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+     "dul": "http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#",
+     "ire": "http://w3c.github.io/wot/w3c-wot-td-ire.owl#",
+     "rdfs": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+     "td": "http://w3c.github.io/wot/w3c-wot-td-ontology.owl#"
   },
   "@type": "Thing",
   "name": "wot:RFIDReader",
