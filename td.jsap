@@ -190,6 +190,7 @@
     		?oldInstance rdf:type wot:EventInstance. 
     		?oldInstance wot:hasTimeStamp ?eOldTimeStamp.
     		?oldInstance td:hasOutput ?eOldOutput.
+    		?oldInstance wot:isGeneratedBy ?thing .
     		?eOldOutput rdf:type ?dataTypeURI.
     		?eOldOutput dul:hasDataValue ?oldValue} 
     		INSERT {?event wot:hasInstance ?newInstance. 
@@ -205,6 +206,7 @@
     		?event rdf:type td:Event. 
     		OPTIONAL {?event wot:hasInstance ?oldInstance. 
     		?oldInstance rdf:type wot:EventInstance. 
+    		?oldInstance wot:isGeneratedBy ?thing .
     		?oldInstance wot:hasTimeStamp ?eOldTimeStamp.
     		?oldInstance td:hasOutput ?eOldOutput.
     		?eOldOutput rdf:type ?dataTypeURI.
