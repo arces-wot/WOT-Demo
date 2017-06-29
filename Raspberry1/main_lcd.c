@@ -22,7 +22,7 @@
  * This code is made for the W3C Web Of Things Plugfest in Dusseldorf (July 2017)
  * 14 june 2017
  *
-gcc main_lcd.c ../../../sepa-C-kpi/sepa_utilities.c ../../../sepa-C-kpi/sepa_consumer.c ../../../sepa-C-kpi/sepa_secure.c ../../../sepa-C-kpi/jsmn.c -o main_lcd -pthread -lcurl`pkg-config --cflags --libs glib-2.0 libwebsockets` -lwiringPi -lwiringPiDev
+gcc main_lcd.c ../../sepa-C-kpi/sepa_producer.c ../../sepa-C-kpi/sepa_utilities.c ../../sepa-C-kpi/sepa_consumer.c ../../sepa-C-kpi/sepa_secure.c ../../sepa-C-kpi/jsmn.c -o main_lcd -pthread -lcurl `pkg-config --cflags --libs glib-2.0 libwebsockets` -lwiringPi -lwiringPiDev
  */
 
 #include <wiringPi.h>
