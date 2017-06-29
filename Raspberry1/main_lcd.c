@@ -91,8 +91,6 @@ void actionRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,
 
 int main(int argc, char **argv) {
 	int o;
-	char lcdHBInstance[50] = "";
-	char HBEventUpdate[1000] = "";
 	unsigned int count = 0;
 	SEPA_subscription_params action_subscription = _initSubscription();
 
@@ -144,12 +142,7 @@ int main(int argc, char **argv) {
     signal(SIGINT, INThandler);
     // HeartBeat continuous loop
     while (alive) {
-        sprintf(lcdHBInstance,"wot:LCDHeartBeatEventInstance%u",count);
-        sprintf(HBEventUpdate,
-                PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT { " LCD_HEART " wot:hasInstance %s. %s rdf:type wot:EventInstance. %s wot:hasTimeStamp ?time} WHERE {BIND(now() AS ?time) . " LCD_HEART " rdf:type td:Event. OPTIONAL { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",
-                lcdHBInstance,lcdHBInstance,lcdHBInstance);
-
-        o=kpProduce(HBEventUpdate,SEPA_UPDATE_ADDRESS,NULL);
+        o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy " THING_UUID ". ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT { " LCD_HEART " wot:hasInstance ?newInstance. ?newInstance wot:isGeneratedBy " THING_UUID ". ?newInstance rdf:type wot:EventInstance. ?newInstance wot:hasTimeStamp ?time} WHERE {BIND(now() AS ?time) . BIND(concat('wot:Event_',STRUUID()) AS ?newInstance) ." LCD_HEART " rdf:type td:Event. OPTIONAL { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy " THING_UUID ". ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",SEPA_UPDATE_ADDRESS,NULL);
         if (o!=HTTP_200_OK) {
             logE("Thing Description heartbeat update error in " THING_UUID "\n");
             return EXIT_FAILURE;
