@@ -41,11 +41,11 @@
 * **Hardware:** LoLin V3 (ESP8266) + Reed Sensor KY-025
 * **Software:** C firmware
 * **WoT Functions**
-.* __Role:__ client
-.* __Protocols:__ HTTP/Websocket
-.* __Encodings:__ UTF-8
-.* __Discovery:__ discovery through SPARQL query/subscription on SEPA
-.* __Application Logic:__ communicates the reading of its reed sensor
+  * __Role:__ client
+  * __Protocols:__ HTTP/Websocket
+  * __Encodings:__ UTF-8
+  * __Discovery:__ discovery through SPARQL query/subscription on SEPA
+  * __Application Logic:__ communicates the reading of its reed sensor
 * __Textual description__: This Web Thing is discoverable through a SPARQL Event Processing
 Architecture (SEPA) and exploits it to communicate the value sensed
 by its reed sensor (true/false).
