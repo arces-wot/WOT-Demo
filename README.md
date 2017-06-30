@@ -31,3 +31,52 @@
   ]
 }
 ```
+
+## Reed Sensor
+### ID Card (according to W3C template)
+
+* **Name:** ARCES Reed Sensor
+* **Picture:**
+* **Logo:** 
+* **Hardware:** LoLin V3 (ESP8266) + Reed Sensor KY-025
+* **Software:** C firmware
+* **WoT Functions**
+  * __Role:__ client
+  * __Protocols:__ HTTP/Websocket
+  * __Encodings:__ UTF-8
+  * __Discovery:__ discovery through SPARQL query/subscription on SEPA
+  * __Application Logic:__ communicates the reading of its reed sensor
+* __Textual description__: This Web Thing is discoverable through a SPARQL Event Processing Architecture (SEPA) and exploits it to communicate the value sensed by its reed sensor (true/false).
+
+
+## RGB Led
+### ID Card (according to W3C template)
+
+* **Name:** ARCES RGB Led
+* **Picture:**
+* **Logo:** 
+* **Hardware:** RaspberryPi3 + RGB Led Ky-009
+* **Software:** C
+* **WoT Functions**
+  * __Role:__ servient
+  * __Protocols:__ HTTP/Websocket
+  * __Encodings:__ UTF-8
+  * __Discovery:__ discovery through SPARQL query/subscription on SEPA
+  * __Application Logic:__ clients may program this LED according to its Thing Description to set colour and blinking frequency
+* __Textual description__: This is a programmable RGB Led. It can be discovered and programmed through its Thing Description mapped into a SPARQL Event Processing Architecture (SEPA). Colour and blinking frequency are its programmable parameters.
+
+## LCD Display
+### ID Card (according to W3C template)
+
+* **Name:** ARCES 32char
+* **Picture:**
+* **Logo:** 
+* **Hardware:** RaspberryPi3 + HD44780 Display
+* **Software:** C
+* **WoT Functions**
+  * __Role:__ server
+  * __Protocols:__ HTTP/Websocket
+  * __Encodings:__ UTF-8
+  * __Discovery:__ discovery through SPARQL query/subscription on SEPA
+  * __Application Logic:__ clients may program this display according to its Thing Description
+* __Textual description__: This is a programmable display that can be discovered and programmed through its Thing Description mapped into a SPARQL Event Processing Architecture (SEPA). 
