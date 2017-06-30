@@ -73,13 +73,17 @@
 			}
 		},
 		"ADD_ACTION_WITHOUT_INPUT": {
-			"sparql": " INSERT {?thing td:hasAction ?action. ?action rdf:type td:Action. ?action td:hasName ?name } WHERE {?thing rdf:type td:Thing}",
+			"sparql": " INSERT {?thing td:hasAction ?action. ?action rdf:type td:Action. ?action td:hasName ?name . ?action wot:isAccessibleBy ?protocol} WHERE {?thing rdf:type td:Thing}",
 			"forcedBindings": {
 				"thing": {
 					"type": "uri",
 					"value": ""
 				},
 				"action": {
+					"type": "uri",
+					"value": ""
+				},
+				"protocol": {
 					"type": "uri",
 					"value": ""
 				},
@@ -90,7 +94,7 @@
 			}
 		},
 		"ADD_ACTION_WITH_INPUT": {
-			"sparql": " INSERT {?thing td:hasAction ?action. ?action rdf:type td:Action. ?action td:hasName ?name. ?action td:hasInput ?input . ?input rdf:type wot:ActionInput . ?input td:hasDataType ?dataType } WHERE {?thing rdf:type td:Thing}",
+			"sparql": " INSERT {?thing td:hasAction ?action. ?action rdf:type td:Action. ?action td:hasName ?name. ?action td:hasInput ?input . ?input rdf:type wot:ActionInput . ?input td:hasDataType ?dataType . ?action wot:isAccessibleBy ?protocol} WHERE {?thing rdf:type td:Thing}",
 			"forcedBindings": {
 				"thing": {
 					"type": "uri",
@@ -105,6 +109,10 @@
 					"value": ""
 				},
 				"dataType": {
+					"type": "uri",
+					"value": ""
+				},
+				"protocol": {
 					"type": "uri",
 					"value": ""
 				},
