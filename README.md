@@ -76,22 +76,31 @@
 
 ```json
 {
-  "@context":
-  {
-     "wot": "http://wot.arces.unibo.it/sepa#",
-     "td": "http://www.w3.org/ns/td#"
+  "@context": {
+    "wot": "http://wot.arces.unibo.it/sepa#",
+    "td": "http://www.w3.org/ns/td#"
   },
   "@type": "td:Thing",
   "name": "ARCES_32char",
   "interactions": [
     {
-      "@type": ["td:Event","wot:LCDHeartBeatEvent"],
+      "@type": [
+        "td:Event",
+        "wot:LCDHeartBeatEvent"
+      ],
       "name": "Raspi16x2LCDAlive"
     },
     {
-      "@type": ["td:Action","wot:LCDWriteAction"],
+      "@type": [
+        "td:Action",
+        "wot:LCDWriteAction"
+      ],
       "name": "Raspi16x2LCD_Write",
-      "inputData": {"valueType": { "type": "string" }}
+      "inputData": {
+        "valueType": {
+          "type": "string"
+        }
+      }
     }
   ]
 }
@@ -116,85 +125,128 @@
  
 ```json
 {
-  "@context":
-  {
-     "wot": "http://wot.arces.unibo.it/sepa#",
-     "td": "http://www.w3.org/ns/td#"
+  "@context": {
+    "wot": "http://wot.arces.unibo.it/sepa#",
+    "td": "http://www.w3.org/ns/td#"
   },
   "@type": "td:Thing",
   "name": "ARCES_RGB_Led",
   "interactions": [
     {
-      "@type": ["td:Event","wot:3ColourHeartBeatEvent"],
+      "@type": [
+        "td:Event",
+        "wot:3ColourHeartBeatEvent"
+      ],
       "name": "Raspi3ColourAlive"
     },
     {
-      "@type": ["td:Action","wot:ChangeColourAction"],
+      "@type": [
+        "td:Action",
+        "wot:ChangeColourAction"
+      ],
       "name": "ChangeRGBLedColour",
       "inputData": {
-      	"valueType": {
-		"type": "object",
-			"properties": {
-				"r": { "type": "integer",
-					"minimum": 0,
-					"maximum": 1},
-				"g": { "type": "integer",
-					"minimum": 0,
-					"maximum": 1},
-				"b": { "type": "integer",
-					"minimum": 0,
-					"maximum": 1}
-				},
-			"required":["r","g","b"]}}
+        "valueType": {
+          "type": "object",
+          "properties": {
+            "r": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "g": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "b": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "r",
+            "g",
+            "b"
+          ]
+        }
+      }
     },
     {
-      "@type": ["td:Action","wot:ChangeFrequencyAction"],
+      "@type": [
+        "td:Action",
+        "wot:ChangeFrequencyAction"
+      ],
       "name": "ChangeRGBBlinkFrequency",
       "inputData": {
-	"valueType": { 
-		"type": "object",
-			"properties": {
-				"frequency": { "type": "integer",
-					"minimum": 0}
-				},
-			"required":["frequency"]}}
+        "valueType": {
+          "type": "object",
+          "properties": {
+            "frequency": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "frequency"
+          ]
+        }
+      }
     },
     {
-      "@type": ["td:Property","wot:RGBcolourProperty"],
+      "@type": [
+        "td:Property",
+        "wot:RGBcolourProperty"
+      ],
       "name": "Raspi3ColourProperty",
       "outputData": {
-	"valueType": { 
-		"type": "object",
-			"properties": {
-				"r": { "type": "integer",
-					"minimum": 0,
-					"maximum": 1},
-				"g": { "type": "integer",
-					"minimum": 0,
-					"maximum": 1},
-				"b": { "type": "integer",
-					"minimum": 0,
-					"maximum": 1}
-			}
-		}
-	},
-	writable":true,
-	"stability":-1
+        "valueType": {
+          "type": "object",
+          "properties": {
+            "r": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "g": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "b": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        }
+      },
+      "writable": true,
+      "stability": -1
     },
     {
-      "@type": ["td:Property","wot:RGBfreqProperty"],
+      "@type": [
+        "td:Property",
+        "wot:RGBfreqProperty"
+      ],
       "name": "Raspi3FreqProperty",
       "outputData": {
-	"valueType": { 
-		"type": "object",
-			"properties": {
-				"frequency": { "type": "integer",
-					"minimum": 0}
-				},
-			"required":["frequency"]}
-	},
-	"writable":true,
-	"stability":-1
+        "valueType": {
+          "type": "object",
+          "properties": {
+            "frequency": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "frequency"
+          ]
+        }
+      },
+      "writable": true,
+      "stability": -1
     }
   ]
 }
