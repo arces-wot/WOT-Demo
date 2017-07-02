@@ -51,9 +51,9 @@
 ### ID Card (according to W3C template)
 
 * **Name:** ARCES_32char
-* **Picture:** 
+* **Picture:** https://www.sparkfun.com/datasheets/LCD/HD44780.pdf
+
 ![](https://github.com/arces-wot/WOT-Demo/blob/master/images/LCD.jpg)
-https://www.sparkfun.com/datasheets/LCD/HD44780.pdf
 * **Logo:** 
 * **Hardware:** RaspberryPi3 + HD44780 Display
 * **Software:** C
@@ -92,6 +92,7 @@ https://www.sparkfun.com/datasheets/LCD/HD44780.pdf
 
 * **Name:** ARCES_RGB_Led
 * **Picture:** 
+
 ![](https://github.com/arces-wot/WOT-Demo/blob/master/images/LED.jpg)
 * **Logo:** 
 * **Hardware:** RaspberryPi3 + RGB Led Ky-009
@@ -195,6 +196,7 @@ https://www.sparkfun.com/datasheets/LCD/HD44780.pdf
 
 * **Name:** ARCES Reed Sensor
 * **Picture:**
+
 ![](https://github.com/arces-wot/WOT-Demo/blob/master/images/REED.png)
 * **Logo:** 
 * **Hardware:** LoLin V3 (ESP8266) + Reed Sensor KY-025
