@@ -1,14 +1,14 @@
 # Demo for the WoT IG/WG F2F Meeting (9-13 July 2017 in Dusseldorf) PlugFest
 
 # Things list
-1. [RFID Reader][]
+1. [RFID Reader][1]
 2. Display
 3. REED
 4. Multicolor LED
 
 # Web Things - Templates and Thing Descriptions
 
-### RFID Reader ###
+### RFID Reader [1] ###
 * **Name:** ARCES RFID Reader
 * **Picture:** (http://www.lab-id.com/wordpress/wp-content/uploads/2016/03/KITNLO.pdf)
 * **Logo:** 
