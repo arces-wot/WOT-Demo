@@ -2,15 +2,15 @@
 
 # Things list
 1. [RFID Reader](https://github.com/arces-wot/WOT-Demo/blob/master/README.md#rfid-reader)
-2. [32 Chars LCD Display][]
-3. REED
-4. Multicolor LED
+2. [32 Chars LCD Display](https://github.com/arces-wot/WOT-Demo/blob/master/README.md#32-chars-lcd-display)
+3. [Reed sensor](https://github.com/arces-wot/WOT-Demo/blob/master/README.md#reed-sensor)
+4. [RGB blinking LED](https://github.com/arces-wot/WOT-Demo/blob/master/README.md#rgb-blinking-led)
 
 # Web Things - Templates and Thing Descriptions
 
 ### RFID Reader ##
 * **Name:** ARCES RFID Reader
-* **Picture:** (http://www.lab-id.com/wordpress/wp-content/uploads/2016/03/KITNLO.pdf)
+* **Picture:** http://www.lab-id.com/wordpress/wp-content/uploads/2016/03/KITNLO.pdf
 * **Logo:** 
 * **Hardware:** LabID RFID Reader 13,56 MHz (ISO 14443, ISO 15693)
 * **Software:** Java
@@ -83,8 +83,22 @@
   ]
 }
 ```
-
 ## RGB blinking led
+### ID Card (according to W3C template)
+
+* **Name:** ARCES_RGB_Led
+* **Picture:**
+* **Logo:** 
+* **Hardware:** RaspberryPi3 + RGB Led Ky-009
+* **Software:** C
+* **WoT Functions**
+  * __Role:__ servient
+  * __Protocols:__ HTTP/Websocket
+  * __Encodings:__ UTF-8
+  * __Discovery:__ discovery through SPARQL query/subscription on SEPA
+  * __Application Logic:__ clients may program this LED according to its Thing Description to set colour and blinking frequency
+* __Textual description__: This is a programmable RGB Led. It can be discovered and programmed through its Thing Description mapped into a SPARQL Event Processing Architecture (SEPA). Colour and blinking frequency are its programmable parameters.
+ 
 ```json
 {
   "@context":
@@ -186,20 +200,3 @@
   * __Discovery:__ discovery through SPARQL query/subscription on SEPA
   * __Application Logic:__ communicates the reading of its reed sensor
 * __Textual description__: This Web Thing is discoverable through a SPARQL Event Processing Architecture (SEPA) and exploits it to communicate the value sensed by its reed sensor (true/false).
-
-
-## RGB Led
-### ID Card (according to W3C template)
-
-* **Name:** ARCES_RGB_Led
-* **Picture:**
-* **Logo:** 
-* **Hardware:** RaspberryPi3 + RGB Led Ky-009
-* **Software:** C
-* **WoT Functions**
-  * __Role:__ servient
-  * __Protocols:__ HTTP/Websocket
-  * __Encodings:__ UTF-8
-  * __Discovery:__ discovery through SPARQL query/subscription on SEPA
-  * __Application Logic:__ clients may program this LED according to its Thing Description to set colour and blinking frequency
-* __Textual description__: This is a programmable RGB Led. It can be discovered and programmed through its Thing Description mapped into a SPARQL Event Processing Architecture (SEPA). Colour and blinking frequency are its programmable parameters.
