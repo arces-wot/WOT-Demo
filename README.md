@@ -1,7 +1,7 @@
 # Demo for the WoT IG/WG F2F Meeting (9-13 July 2017 in Dusseldorf) PlugFest
 
 # Things list
-1. RFID Reader 
+1. [RFID Reader] 
 2. Display
 3. REED
 4. Multicolor LED
