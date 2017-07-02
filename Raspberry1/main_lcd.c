@@ -45,19 +45,20 @@ gcc main_lcd.c ../../sepa-C-kpi/sepa_producer.c ../../sepa-C-kpi/sepa_utilities.
 #define DATA_BITS		4
 #define ALIVE_SECONDS	10
 
-#define THING_UUID			    "wot:Raspberry1"
-#define THING_NAME              "Raspi16x2LCD"
-#define LOCATION_UUID		    "wot:MyLocation"
-#define LCD_HEART               "wot:LCDHeartBeatEvent"
-#define LCD_HEART_NAME          "Raspi16x2LCDAlive"
-#define LCD_WRITEACTION         "wot:LCDWriteAction"
-#define LCD_WRITEACTION_NAME    "Raspi16x2LCD_Write"
-#define LCD_WRITEACTION_INPUT_TYPE "wot:LCDWriteActionInputType"
+#define THING_UUID			    			"wot:Raspberry1"
+#define THING_NAME              			"ARCES_32char"
+#define LCD_HEART               			"wot:LCDHeartBeatEvent"
+#define LCD_HEART_NAME          			"Raspi16x2LCDAlive"
+#define LCD_WRITEACTION         			"wot:LCDWriteAction"
+#define LCD_WRITEACTION_NAME    			"Raspi16x2LCD_Write"
+#define LCD_WRITEACTION_INPUT_TYPE 			"wot:LCDWriteActionInputType"
+#define SEPA_PROTOCOL						"wot:SEPAProtocol"
 
-#define PREFIX_WOT              "PREFIX wot:<http://www.arces.unibo.it/wot#> "
-#define PREFIX_RDF              "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-#define PREFIX_TD               "PREFIX td:<http://w3c.github.io/wot/w3c-wot-td-ontology.owl#> "
-#define PREFIX_DUL              "PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> "
+#define PREFIX_WOT              			"PREFIX wot:<http://www.arces.unibo.it/wot#> "
+#define PREFIX_RDF              			"PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+#define PREFIX_TD               			"PREFIX td:<http://w3c.github.io/wot/w3c-wot-td-ontology.owl#> "
+#define PREFIX_DUL              			"PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> "
+#define PREFIX_XSD							"PREFIX xsd:<http://www.w3.org/2001/XMLSchema#> "
 #define SEPA_SUBSCRIPTION_ADDRESS			"ws://192.168.1.146:9000/subscribe"
 #define SEPA_UPDATE_ADDRESS					"http://192.168.1.146:8000/update"
 
@@ -100,29 +101,27 @@ int main(int argc, char **argv) {
 
     //LCD initialization
 	wiringPiSetup();
-	lcd = lcdInit(ROW_NUMBER,COL_NUMBER,DATA_BITS,
-			LCD_RS,LCD_E,LCD_D4,LCD_D5,LCD_D6,LCD_D7,
-			0,0,0,0);
+	lcd = lcdInit(ROW_NUMBER,COL_NUMBER,DATA_BITS,LCD_RS,LCD_E,LCD_D4,LCD_D5,LCD_D6,LCD_D7,0,0,0,0);
 	lcdPosition(lcd,0,0);
 
     // As more than one curl request will be done by this process, by calling this function we inhibit continuous memory allocation and deallocation by curl libraries.
     http_client_init();
 
 	// insert thing description
-	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " THING_UUID " wot:isDiscoverable ?oldDiscoverable} INSERT { " THING_UUID " rdf:type td:Thing. " THING_UUID " td:hasName " THING_NAME ". " THING_UUID " wot:isDiscoverable 'true'} WHERE {OPTIONAL { " THING_UUID " rdf:type td:Thing. " THING_UUID " wot:isDiscoverable ?oldDiscoverable }}",SEPA_UPDATE_ADDRESS,NULL);
+	o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE {"THING_UUID" wot:isDiscoverable ?discoverable . "THING_UUID" td:hasName ?oldName . "THING_UUID" wot:hasComponent ?component. ?component rdf:type td:Thing . "THING_UUID" td:hasProperty ?property. ?property td:hasName ?pName. ?property td:hasStability ?pStability. ?property td:isWritable ?pWrite. ?pValueType rdf:type ?pDataType . ?pValueType dul:hasDataValue ?pDataValue . "THING_UUID" td:hasEvent ?event. ?event td:hasName ?eName. ?event td:forProperty ?eProperty . "THING_UUID" td:hasAction ?action. ?action td:hasName ?aName. ?action wot:isAccessibleBy ?aProtocol. ?action td:forProperty ?aProperty} INSERT {"THING_UUID" rdf:type td:Thing . "THING_UUID" td:hasName '"THING_NAME"'. "THING_UUID" wot:isDiscoverable 'true'} WHERE { OPTIONAL {"THING_UUID" rdf:type td:Thing. "THING_UUID" wot:isDiscoverable ?discoverable . "THING_UUID" td:hasName ?oldName} . OPTIONAL {"THING_UUID" wot:hasComponent ?component. ?component rdf:type td:Thing} . OPTIONAL {"THING_UUID" td:hasProperty ?property. ?property td:hasName ?pName. ?property td:hasStability ?pStability. ?property td:isWritable ?pWrite. ?pValueType rdf:type ?pDataType . ?pValueType dul:hasDataValue ?pDataValue} . OPTIONAL {"THING_UUID" td:hasEvent ?event. ?event td:hasName ?eName. OPTIONAL {?event td:forProperty ?eProperty}} . OPTIONAL {"THING_UUID" td:hasAction ?action. ?action td:hasName ?aName. ?action wot:isAccessibleBy ?aProtocol. OPTIONAL {?action td:forProperty ?aProperty}} }",SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
         logE("Thing Description insert update error in " THING_UUID "\n");
         return EXIT_FAILURE;
     }
     // declare Action LCDWrite
-    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasAction " LCD_WRITEACTION ". " LCD_WRITEACTION " rdf:type td:Action. " LCD_WRITEACTION " td:hasName '" LCD_WRITEACTION_NAME "'. " LCD_WRITEACTION " td:hasInput " LCD_WRITEACTION_INPUT_TYPE ". " LCD_WRITEACTION_INPUT_TYPE " rdf:type dul:InformationObject}	WHERE { " LCD_WRITEACTION " rdf:type td:Thing}",SEPA_UPDATE_ADDRESS,NULL);
+    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE {"THING_UUID" td:hasAction "LCD_WRITEACTION". "LCD_WRITEACTION" rdf:type td:Action. "LCD_WRITEACTION" td:hasName ?oldName. "LCD_WRITEACTION" td:hasInput ?oldInput . ?oldInput rdf:type wot:ActionInput . ?oldInput td:hasDataType ?oldDataType . "LCD_WRITEACTION" wot:isAccessibleBy "SEPA_PROTOCOL"} INSERT {"THING_UUID" td:hasAction "LCD_WRITEACTION". "LCD_WRITEACTION" rdf:type td:Action. "LCD_WRITEACTION" td:hasName '"LCD_WRITEACTION_NAME"'. "LCD_WRITEACTION" td:hasInput ?input . ?input rdf:type wot:ActionInput . ?input td:hasDataType xsd:string . "LCD_WRITEACTION" wot:isAccessibleBy "SEPA_PROTOCOL"} WHERE { "THING_UUID" rdf:type td:Thing . BIND(IRI(concat('wot:Input_',STRUUID())) AS ?input) . OPTIONAL {"THING_UUID" td:hasAction "LCD_WRITEACTION". "LCD_WRITEACTION" rdf:type td:Action. "LCD_WRITEACTION" td:hasName ?oldName. "LCD_WRITEACTION" td:hasInput ?oldInput . ?oldInput rdf:type wot:ActionInput . ?oldInput td:hasDataType ?oldDataType . "LCD_WRITEACTION" wot:isAccessibleBy "SEPA_PROTOCOL"}}",SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
         logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
         return EXIT_FAILURE;
     }
 
     // declare Event HeartBeat
-    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "INSERT { " THING_UUID " td:hasEvent " LCD_HEART ". " LCD_HEART " rdf:type td:Event. " LCD_HEART " td:hasName '" LCD_HEART_NAME "'} WHERE { " THING_UUID " rdf:type td:Thing}",SEPA_UPDATE_ADDRESS,NULL);
+    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE {"LCD_HEART" td:hasName ?oldName} INSERT {"THING_UUID" td:hasEvent "LCD_HEART". "LCD_HEART" rdf:type td:Event. "LCD_HEART" td:hasName '"LCD_HEART_NAME"' } WHERE {"THING_UUID" rdf:type td:Thing . OPTIONAL{"THING_UUID" td:hasEvent "LCD_HEART". "LCD_HEART" rdf:type td:Event. "LCD_HEART" td:hasName ?oldName}}",SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
         logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
         return EXIT_FAILURE;
@@ -130,7 +129,7 @@ int main(int argc, char **argv) {
 
     // subscribe to LCDWrite action requests
     sepa_subscriber_init();
-    sepa_subscription_builder(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "SELECT ?instance ?input ?value WHERE { " LCD_WRITEACTION " rdf:type td:Action. " LCD_WRITEACTION " wot:hasInstance ?instance. ?instance rdf:type wot:ActionInstance. OPTIONAL {?instance td:hasInput ?input. ?input dul:hasDataValue ?value}}"
+    sepa_subscription_builder(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "SELECT ?value ?timeStamp WHERE {"LCD_WRITEACTION" rdf:type td:Action. "LCD_WRITEACTION" wot:hasInstance ?instance. ?instance wot:hasTimeStamp ?timeStamp . OPTIONAL {?instance td:hasInput ?input. ?input dul:hasDataValue ?value}}"
               ,NULL,NULL,
               SEPA_SUBSCRIPTION_ADDRESS,
               &action_subscription);
@@ -142,7 +141,7 @@ int main(int argc, char **argv) {
     signal(SIGINT, INThandler);
     // HeartBeat continuous loop
     while (alive) {
-        o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy " THING_UUID ". ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT { " LCD_HEART " wot:hasInstance ?newInstance. ?newInstance wot:isGeneratedBy " THING_UUID ". ?newInstance rdf:type wot:EventInstance. ?newInstance wot:hasTimeStamp ?time} WHERE {BIND(now() AS ?time) . BIND(concat('wot:Event_',STRUUID()) AS ?newInstance) ." LCD_HEART " rdf:type td:Event. OPTIONAL { " LCD_HEART " wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy " THING_UUID ". ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",SEPA_UPDATE_ADDRESS,NULL);
+        o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD PREFIX_XSD "DELETE { "LCD_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT {"LCD_HEART" wot:hasInstance ?newInstance. ?newInstance wot:isGeneratedBy "THING_UUID" . ?newInstance rdf:type wot:EventInstance. ?newInstance wot:hasTimeStamp ?time} WHERE { "LCD_HEART" rdf:type td:Event. BIND(now() AS ?time) . BIND(IRI(concat('wot:Event_',STRUUID())) AS ?newInstance) . OPTIONAL {"LCD_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",SEPA_UPDATE_ADDRESS,NULL);
         if (o!=HTTP_200_OK) {
             logE("Thing Description heartbeat update error in " THING_UUID "\n");
             return EXIT_FAILURE;
