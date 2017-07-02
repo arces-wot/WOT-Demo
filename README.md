@@ -10,7 +10,8 @@
 
 ### RFID Reader ##
 * **Name:** ARCES RFID Reader
-* **Picture:** http://www.lab-id.com/wordpress/wp-content/uploads/2016/03/KITNLO.pdf
+* **Picture:** ![](https://github.com/arces-wot/WOT-Demo/blob/master/images/RFID.jpg)
+http://www.lab-id.com/wordpress/wp-content/uploads/2016/03/KITNLO.pdf
 * **Logo:** 
 * **Hardware:** LabID RFID Reader 13,56 MHz (ISO 14443, ISO 15693)
 * **Software:** Java
@@ -49,8 +50,8 @@
 ### ID Card (according to W3C template)
 
 * **Name:** ARCES_32char
-* **Picture:** https://www.sparkfun.com/datasheets/LCD/HD44780.pdf
-![](http://www.buydisplay.com/media/catalog/product/cache/1/image/c577d1203d4a53d9f98182eb6081b1d6/1/6/1602_blue_lcd_module_hd44780_16x2_displays_characters_white_backlight.jpg)
+* **Picture:** ![](https://github.com/arces-wot/WOT-Demo/blob/master/images/LCD.jpg)
+https://www.sparkfun.com/datasheets/LCD/HD44780.pdf
 * **Logo:** 
 * **Hardware:** RaspberryPi3 + HD44780 Display
 * **Software:** C
@@ -88,7 +89,7 @@
 ### ID Card (according to W3C template)
 
 * **Name:** ARCES_RGB_Led
-* **Picture:** ![](https://tkkrlab.nl/w/images/thumb/5/59/Arduino_KY-009_3-color_full-color_LED_SMD_modules_Sku_135046.jpg/400px-Arduino_KY-009_3-color_full-color_LED_SMD_modules_Sku_135046.jpg)
+* **Picture:** ![](https://github.com/arces-wot/WOT-Demo/blob/master/images/LED.jpg)
 * **Logo:** 
 * **Hardware:** RaspberryPi3 + RGB Led Ky-009
 * **Software:** C
@@ -190,7 +191,7 @@
 ### ID Card (according to W3C template)
 
 * **Name:** ARCES Reed Sensor
-* **Picture:**
+* **Picture:**![](https://github.com/arces-wot/WOT-Demo/blob/master/images/REED.jpg)
 * **Logo:** 
 * **Hardware:** LoLin V3 (ESP8266) + Reed Sensor KY-025
 * **Software:** C firmware
