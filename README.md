@@ -25,9 +25,7 @@
 * __Textual description__: This Web Thing performs updates on changes of the RFID tags within the RF field of the reader.
 
 ```json
-{
-  "@context":
-  {
+{"@context":{
      "wot": "http://wot.arces.unibo.it/sepa#",
      "td": "http://www.w3.org/ns/td#"
   },
