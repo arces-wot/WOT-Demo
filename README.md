@@ -8,7 +8,7 @@
 
 # Web Things - Templates and Thing Descriptions
 
-## RFID Reader
+### RFID Reader ###
 * **Name:** ARCES RFID Reader
 * **Picture:** (http://www.lab-id.com/wordpress/wp-content/uploads/2016/03/KITNLO.pdf)
 * **Logo:** 
