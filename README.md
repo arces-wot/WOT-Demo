@@ -2,7 +2,7 @@
 
 # Things list
 1. [RFID Reader](https://github.com/arces-wot/WOT-Demo/blob/master/README.md#rfid-reader)
-2. Display
+2. [32 Chars LCD Display][]
 3. REED
 4. Multicolor LED
 
@@ -45,7 +45,22 @@
 }
 ```
 
-## 32 char LCD screen
+## 32 Chars LCD Display
+### ID Card (according to W3C template)
+
+* **Name:** ARCES_32char
+* **Picture:**
+* **Logo:** 
+* **Hardware:** RaspberryPi3 + HD44780 Display
+* **Software:** C
+* **WoT Functions**
+  * __Role:__ server
+  * __Protocols:__ HTTP/Websocket
+  * __Encodings:__ UTF-8
+  * __Discovery:__ discovery through SPARQL query/subscription on SEPA
+  * __Application Logic:__ clients may program this display according to its Thing Description
+* __Textual description__: This is a programmable display that can be discovered and programmed through its Thing Description mapped into a SPARQL Event Processing Architecture (SEPA). 
+
 ```json
 {
   "@context":
@@ -188,19 +203,3 @@
   * __Discovery:__ discovery through SPARQL query/subscription on SEPA
   * __Application Logic:__ clients may program this LED according to its Thing Description to set colour and blinking frequency
 * __Textual description__: This is a programmable RGB Led. It can be discovered and programmed through its Thing Description mapped into a SPARQL Event Processing Architecture (SEPA). Colour and blinking frequency are its programmable parameters.
-
-## LCD Display
-### ID Card (according to W3C template)
-
-* **Name:** ARCES_32char
-* **Picture:**
-* **Logo:** 
-* **Hardware:** RaspberryPi3 + HD44780 Display
-* **Software:** C
-* **WoT Functions**
-  * __Role:__ server
-  * __Protocols:__ HTTP/Websocket
-  * __Encodings:__ UTF-8
-  * __Discovery:__ discovery through SPARQL query/subscription on SEPA
-  * __Application Logic:__ clients may program this display according to its Thing Description
-* __Textual description__: This is a programmable display that can be discovered and programmed through its Thing Description mapped into a SPARQL Event Processing Architecture (SEPA). 
