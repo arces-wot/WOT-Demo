@@ -54,9 +54,9 @@ gcc main_lcd.c ../../sepa-C-kpi/sepa_producer.c ../../sepa-C-kpi/sepa_utilities.
 #define LCD_WRITEACTION_INPUT_TYPE 			"wot:LCDWriteActionInputType"
 #define SEPA_PROTOCOL						"wot:SEPAProtocol"
 
-#define PREFIX_WOT              			"PREFIX wot:<http://www.arces.unibo.it/wot#> "
+#define PREFIX_WOT              			"PREFIX wot:<http://wot.arces.unibo.it/sepa#> "
 #define PREFIX_RDF              			"PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-#define PREFIX_TD               			"PREFIX td:<http://w3c.github.io/wot/w3c-wot-td-ontology.owl#> "
+#define PREFIX_TD               			"PREFIX td:<http://www.w3.org/ns/td#> "
 #define PREFIX_DUL              			"PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> "
 #define PREFIX_XSD							"PREFIX xsd:<http://www.w3.org/2001/XMLSchema#> "
 #define SEPA_SUBSCRIPTION_ADDRESS			"ws://192.168.1.146:9000/subscribe"

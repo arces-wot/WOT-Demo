@@ -55,9 +55,9 @@ gcc main_3colours.c ../../sepa-C-kpi/sepa_utilities.c ../../sepa-C-kpi/sepa_cons
 #define SEPA_PROTOCOL				"wot:SEPAProtocol"
 
 
-#define PREFIX_WOT              	"PREFIX wot:<http://www.arces.unibo.it/wot#> "
+#define PREFIX_WOT              	"PREFIX wot:<http://wot.arces.unibo.it/sepa#> "
 #define PREFIX_RDF              	"PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-#define PREFIX_TD               	"PREFIX td:<http://w3c.github.io/wot/w3c-wot-td-ontology.owl#> "
+#define PREFIX_TD               	"PREFIX td:<http://www.w3.org/ns/td#> "
 #define PREFIX_DUL              	"PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> "
 #define PREFIX_XSD					"PREFIX xsd:<http://www.w3.org/2001/XMLSchema#> "
 

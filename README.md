@@ -32,6 +32,117 @@
 }
 ```
 
+## 32 char LCD screen
+```json
+{
+  "@context":
+  {
+     "wot": "http://wot.arces.unibo.it/sepa#",
+     "td": "http://www.w3.org/ns/td#"
+  },
+  "@type": "td:Thing",
+  "name": "ARCES_32char",
+  "interactions": [
+    {
+      "@type": ["td:Event","wot:LCDHeartBeatEvent"],
+      "name": "Raspi16x2LCDAlive"
+    },
+    {
+      "@type": ["td:Action","wot:LCDWriteAction"],
+      "name": "Raspi16x2LCD_Write",
+      "inputData": {"valueType": { "type": "string" }}
+    }
+  ]
+}
+```
+
+## RGB blinking led
+```json
+{
+  "@context":
+  {
+     "wot": "http://wot.arces.unibo.it/sepa#",
+     "td": "http://www.w3.org/ns/td#"
+  },
+  "@type": "td:Thing",
+  "name": "ARCES_RGB_Led",
+  "interactions": [
+    {
+      "@type": ["td:Event","wot:3ColourHeartBeatEvent"],
+      "name": "Raspi3ColourAlive"
+    },
+    {
+      "@type": ["td:Action","wot:ChangeColourAction"],
+      "name": "ChangeRGBLedColour",
+      "inputData": {
+			"valueType": { 
+				"type": "object",
+				"properties": {
+					"r": { "type": "integer",
+							"minimum": 0,
+							"maximum": 1},
+					"g": { "type": "integer",
+							"minimum": 0,
+							"maximum": 1},
+					"b": { "type": "integer",
+							"minimum": 0,
+							"maximum": 1}
+				},
+				"required":["r","g","b"]}}
+    },
+    {
+      "@type": ["td:Action","wot:ChangeFrequencyAction"],
+      "name": "ChangeRGBBlinkFrequency",
+      "inputData": {
+			"valueType": { 
+				"type": "object",
+				"properties": {
+					"frequency": { "type": "integer",
+									"minimum": 0}
+				},
+				"required":["frequency"]}}
+    },
+    {
+      "@type": ["td:Property","wot:RGBcolourProperty"],
+      "name": "Raspi3ColourProperty",
+      "outputData": {
+			"valueType": { 
+				"type": "object",
+				"properties": {
+					"r": { "type": "integer",
+							"minimum": 0,
+							"maximum": 1},
+					"g": { "type": "integer",
+							"minimum": 0,
+							"maximum": 1},
+					"b": { "type": "integer",
+							"minimum": 0,
+							"maximum": 1}
+				}
+			}
+		},
+		"writable":true,
+		"stability":-1
+    },
+    {
+      "@type": ["td:Property","wot:RGBfreqProperty"],
+      "name": "Raspi3FreqProperty",
+      "outputData": {
+			"valueType": { 
+				"type": "object",
+				"properties": {
+					"frequency": { "type": "integer",
+									"minimum": 0}
+				},
+				"required":["frequency"]}
+		},
+		"writable":true,
+		"stability":-1
+    }
+  ]
+}
+```
+
 ## Reed Sensor
 ### ID Card (according to W3C template)
 
@@ -52,7 +163,7 @@
 ## RGB Led
 ### ID Card (according to W3C template)
 
-* **Name:** ARCES RGB Led
+* **Name:** ARCES_RGB_Led
 * **Picture:**
 * **Logo:** 
 * **Hardware:** RaspberryPi3 + RGB Led Ky-009
@@ -68,7 +179,7 @@
 ## LCD Display
 ### ID Card (according to W3C template)
 
-* **Name:** ARCES 32char
+* **Name:** ARCES_32char
 * **Picture:**
 * **Logo:** 
 * **Hardware:** RaspberryPi3 + HD44780 Display
