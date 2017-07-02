@@ -1,14 +1,27 @@
 # Demo for the WoT IG/WG F2F Meeting (9-13 July 2017 in Dusseldorf) PlugFest
 
 # Things list
-1. RFID Reader (http://www.lab-id.com/wordpress/wp-content/uploads/2016/03/KITNLO.pdf)
+1. RFID Reader 
 2. Display
 3. REED
 4. Multicolor LED
 
-# Web Thing Descriptions
+# Web Things - Templates and Thing Descriptions
 
 ## RFID Reader
+* **Name:** ARCES RFID Reader
+* **Picture:** (http://www.lab-id.com/wordpress/wp-content/uploads/2016/03/KITNLO.pdf)
+* **Logo:** 
+* **Hardware:** LabID RFID Reader 13,56 MHz (ISO 14443, ISO 15693)
+* **Software:** Java
+* **WoT Functions**
+  * __Role:__ client
+  * __Protocols:__ SPARQL 1.1 SE Protocol
+  * __Encodings:__ UTF-8
+  * __Discovery:__ can be discovered both locally or remotely through the discovery mechanism provided by SEPA
+  * __Application Logic:__ communicates the reading of tags in the reader range
+* __Textual description__: This Web Thing performs updates on changes of the RFID tags within the RF field of the reader.
+
 ```json
 {
   "@context":
