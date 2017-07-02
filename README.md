@@ -26,21 +26,31 @@
 
 ```json
 {
-"@context":{
-     "wot": "http://wot.arces.unibo.it/sepa#",
-     "td": "http://www.w3.org/ns/td#"
+  "@context": {
+    "wot": "http://wot.arces.unibo.it/sepa#",
+    "td": "http://www.w3.org/ns/td#"
   },
   "@type": "td:Thing",
   "name": "RFID Reader",
   "interactions": [
     {
-      "@type": ["td:Event","wot:RFIDReaderPing"],
+      "@type": [
+        "td:Event",
+        "wot:RFIDReaderPing"
+      ],
       "name": "RFID Reader is alive even"
     },
     {
-      "@type": ["td:Event","wot:TagsPollChanged"],
+      "@type": [
+        "td:Event",
+        "wot:TagsPollChanged"
+      ],
       "name": "TagsPollChanged",
-      "outputData": {"valueType": { "type": "string" }}
+      "outputData": {
+        "valueType": {
+          "type": "string"
+        }
+      }
     }
   ]
 }
