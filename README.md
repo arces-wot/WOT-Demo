@@ -10,9 +10,9 @@
 
 ### RFID Reader ##
 * **Name:** ARCES RFID Reader
-* **Picture:** 
+* **Picture:** http://www.lab-id.com/wordpress/wp-content/uploads/2016/03/KITNLO.pdf
+
 ![](https://github.com/arces-wot/WOT-Demo/blob/master/images/RFID.png)
-http://www.lab-id.com/wordpress/wp-content/uploads/2016/03/KITNLO.pdf
 * **Logo:** 
 * **Hardware:** LabID RFID Reader 13,56 MHz (ISO 14443, ISO 15693)
 * **Software:** Java
