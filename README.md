@@ -16,7 +16,7 @@
 * **Software:** Java
 * **WoT Functions**
   * __Role:__ client
-  * __Protocols:__ SPARQL 1.1 SE Protocol
+  * __Protocols:__ HTTP
   * __Encodings:__ UTF-8
   * __Discovery:__ can be discovered both locally or remotely through the discovery mechanism provided by SEPA
   * __Application Logic:__ communicates the reading of tags in the reader range
