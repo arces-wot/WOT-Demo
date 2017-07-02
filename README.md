@@ -50,6 +50,7 @@
 
 * **Name:** ARCES_32char
 * **Picture:** https://www.sparkfun.com/datasheets/LCD/HD44780.pdf
+![](http://www.buydisplay.com/media/catalog/product/cache/1/image/c577d1203d4a53d9f98182eb6081b1d6/1/6/1602_blue_lcd_module_hd44780_16x2_displays_characters_white_backlight.jpg)
 * **Logo:** 
 * **Hardware:** RaspberryPi3 + HD44780 Display
 * **Software:** C
