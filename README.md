@@ -11,6 +11,8 @@
 ### RFID Reader ##
 * **Name:** ARCES RFID Reader
 * **Picture:** http://www.lab-id.com/wordpress/wp-content/uploads/2016/03/KITNLO.pdf
+
+![](https://github.com/arces-wot/WOT-Demo/blob/master/images/RFID.png)
 * **Logo:** 
 * **Hardware:** LabID RFID Reader 13,56 MHz (ISO 14443, ISO 15693)
 * **Software:** Java
@@ -24,31 +26,21 @@
 
 ```json
 {
-  "@context": {
-    "wot": "http://wot.arces.unibo.it/sepa#",
-    "td": "http://www.w3.org/ns/td#"
+"@context":{
+     "wot": "http://wot.arces.unibo.it/sepa#",
+     "td": "http://www.w3.org/ns/td#"
   },
   "@type": "td:Thing",
   "name": "RFID Reader",
   "interactions": [
     {
-      "@type": [
-        "td:Event",
-        "wot:RFIDReaderPing"
-      ],
+      "@type": ["td:Event","wot:RFIDReaderPing"],
       "name": "RFID Reader is alive even"
     },
     {
-      "@type": [
-        "td:Event",
-        "wot:TagsPollChanged"
-      ],
+      "@type": ["td:Event","wot:TagsPollChanged"],
       "name": "TagsPollChanged",
-      "outputData": {
-        "valueType": {
-          "type": "string"
-        }
-      }
+      "outputData": {"valueType": { "type": "string" }}
     }
   ]
 }
@@ -59,7 +51,8 @@
 
 * **Name:** ARCES_32char
 * **Picture:** https://www.sparkfun.com/datasheets/LCD/HD44780.pdf
-![](http://www.buydisplay.com/media/catalog/product/cache/1/image/c577d1203d4a53d9f98182eb6081b1d6/1/6/1602_blue_lcd_module_hd44780_16x2_displays_characters_white_backlight.jpg)
+
+![](https://github.com/arces-wot/WOT-Demo/blob/master/images/LCD.jpg)
 * **Logo:** 
 * **Hardware:** RaspberryPi3 + HD44780 Display
 * **Software:** C
@@ -97,7 +90,9 @@
 ### ID Card (according to W3C template)
 
 * **Name:** ARCES_RGB_Led
-* **Picture:** ![](https://tkkrlab.nl/w/images/thumb/5/59/Arduino_KY-009_3-color_full-color_LED_SMD_modules_Sku_135046.jpg/400px-Arduino_KY-009_3-color_full-color_LED_SMD_modules_Sku_135046.jpg)
+* **Picture:** 
+
+![](https://github.com/arces-wot/WOT-Demo/blob/master/images/LED.jpg)
 * **Logo:** 
 * **Hardware:** RaspberryPi3 + RGB Led Ky-009
 * **Software:** C
@@ -127,69 +122,69 @@
       "@type": ["td:Action","wot:ChangeColourAction"],
       "name": "ChangeRGBLedColour",
       "inputData": {
-			"valueType": { 
-				"type": "object",
-				"properties": {
-					"r": { "type": "integer",
-							"minimum": 0,
-							"maximum": 1},
-					"g": { "type": "integer",
-							"minimum": 0,
-							"maximum": 1},
-					"b": { "type": "integer",
-							"minimum": 0,
-							"maximum": 1}
+      	"valueType": {
+		"type": "object",
+			"properties": {
+				"r": { "type": "integer",
+					"minimum": 0,
+					"maximum": 1},
+				"g": { "type": "integer",
+					"minimum": 0,
+					"maximum": 1},
+				"b": { "type": "integer",
+					"minimum": 0,
+					"maximum": 1}
 				},
-				"required":["r","g","b"]}}
+			"required":["r","g","b"]}}
     },
     {
       "@type": ["td:Action","wot:ChangeFrequencyAction"],
       "name": "ChangeRGBBlinkFrequency",
       "inputData": {
-			"valueType": { 
-				"type": "object",
-				"properties": {
-					"frequency": { "type": "integer",
-									"minimum": 0}
+	"valueType": { 
+		"type": "object",
+			"properties": {
+				"frequency": { "type": "integer",
+					"minimum": 0}
 				},
-				"required":["frequency"]}}
+			"required":["frequency"]}}
     },
     {
       "@type": ["td:Property","wot:RGBcolourProperty"],
       "name": "Raspi3ColourProperty",
       "outputData": {
-			"valueType": { 
-				"type": "object",
-				"properties": {
-					"r": { "type": "integer",
-							"minimum": 0,
-							"maximum": 1},
-					"g": { "type": "integer",
-							"minimum": 0,
-							"maximum": 1},
-					"b": { "type": "integer",
-							"minimum": 0,
-							"maximum": 1}
-				}
+	"valueType": { 
+		"type": "object",
+			"properties": {
+				"r": { "type": "integer",
+					"minimum": 0,
+					"maximum": 1},
+				"g": { "type": "integer",
+					"minimum": 0,
+					"maximum": 1},
+				"b": { "type": "integer",
+					"minimum": 0,
+					"maximum": 1}
 			}
-		},
-		"writable":true,
-		"stability":-1
+		}
+	},
+	writable":true,
+	"stability":-1
     },
     {
       "@type": ["td:Property","wot:RGBfreqProperty"],
       "name": "Raspi3FreqProperty",
       "outputData": {
-			"valueType": { 
-				"type": "object",
-				"properties": {
-					"frequency": { "type": "integer",
-									"minimum": 0}
+	"valueType": { 
+		"type": "object",
+			"properties": {
+				"frequency": { "type": "integer",
+					"minimum": 0}
 				},
-				"required":["frequency"]}
-		},
-		"writable":true,
-		"stability":-1
+			"required":["frequency"]}
+	},
+	"writable":true,
+	"stability":-1
     }
   ]
 }
@@ -200,6 +195,8 @@
 
 * **Name:** ARCES Reed Sensor
 * **Picture:**
+
+![](https://github.com/arces-wot/WOT-Demo/blob/master/images/REED.png)
 * **Logo:** 
 * **Hardware:** LoLin V3 (ESP8266) + Reed Sensor KY-025
 * **Software:** C firmware
