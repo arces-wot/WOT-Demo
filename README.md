@@ -87,7 +87,7 @@
 ### ID Card (according to W3C template)
 
 * **Name:** ARCES_RGB_Led
-* **Picture:**
+* **Picture:** ![](https://tkkrlab.nl/w/images/thumb/5/59/Arduino_KY-009_3-color_full-color_LED_SMD_modules_Sku_135046.jpg/400px-Arduino_KY-009_3-color_full-color_LED_SMD_modules_Sku_135046.jpg)
 * **Logo:** 
 * **Hardware:** RaspberryPi3 + RGB Led Ky-009
 * **Software:** C
