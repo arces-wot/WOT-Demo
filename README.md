@@ -35,8 +35,8 @@
   "name": "RFID Reader",
   "interactions": [
     {
-      "@type": ["td:Event","wot:Ping"],
-      "name": "Ping"
+      "@type": ["td:Event","wot:RFIDReaderPing"],
+      "name": "RFID Reader is alive even"
     },
     {
       "@type": ["td:Event","wot:TagsPollChanged"],
@@ -123,69 +123,69 @@
       "@type": ["td:Action","wot:ChangeColourAction"],
       "name": "ChangeRGBLedColour",
       "inputData": {
-			"valueType": { 
-				"type": "object",
-				"properties": {
-					"r": { "type": "integer",
-							"minimum": 0,
-							"maximum": 1},
-					"g": { "type": "integer",
-							"minimum": 0,
-							"maximum": 1},
-					"b": { "type": "integer",
-							"minimum": 0,
-							"maximum": 1}
+      	"valueType": {
+		"type": "object",
+			"properties": {
+				"r": { "type": "integer",
+					"minimum": 0,
+					"maximum": 1},
+				"g": { "type": "integer",
+					"minimum": 0,
+					"maximum": 1},
+				"b": { "type": "integer",
+					"minimum": 0,
+					"maximum": 1}
 				},
-				"required":["r","g","b"]}}
+			"required":["r","g","b"]}}
     },
     {
       "@type": ["td:Action","wot:ChangeFrequencyAction"],
       "name": "ChangeRGBBlinkFrequency",
       "inputData": {
-			"valueType": { 
-				"type": "object",
-				"properties": {
-					"frequency": { "type": "integer",
-									"minimum": 0}
+	"valueType": { 
+		"type": "object",
+			"properties": {
+				"frequency": { "type": "integer",
+					"minimum": 0}
 				},
-				"required":["frequency"]}}
+			"required":["frequency"]}}
     },
     {
       "@type": ["td:Property","wot:RGBcolourProperty"],
       "name": "Raspi3ColourProperty",
       "outputData": {
-			"valueType": { 
-				"type": "object",
-				"properties": {
-					"r": { "type": "integer",
-							"minimum": 0,
-							"maximum": 1},
-					"g": { "type": "integer",
-							"minimum": 0,
-							"maximum": 1},
-					"b": { "type": "integer",
-							"minimum": 0,
-							"maximum": 1}
-				}
+	"valueType": { 
+		"type": "object",
+			"properties": {
+				"r": { "type": "integer",
+					"minimum": 0,
+					"maximum": 1},
+				"g": { "type": "integer",
+					"minimum": 0,
+					"maximum": 1},
+				"b": { "type": "integer",
+					"minimum": 0,
+					"maximum": 1}
 			}
-		},
-		"writable":true,
-		"stability":-1
+		}
+	},
+	writable":true,
+	"stability":-1
     },
     {
       "@type": ["td:Property","wot:RGBfreqProperty"],
       "name": "Raspi3FreqProperty",
       "outputData": {
-			"valueType": { 
-				"type": "object",
-				"properties": {
-					"frequency": { "type": "integer",
-									"minimum": 0}
+	"valueType": { 
+		"type": "object",
+			"properties": {
+				"frequency": { "type": "integer",
+					"minimum": 0}
 				},
-				"required":["frequency"]}
-		},
-		"writable":true,
-		"stability":-1
+			"required":["frequency"]}
+	},
+	"writable":true,
+	"stability":-1
     }
   ]
 }
