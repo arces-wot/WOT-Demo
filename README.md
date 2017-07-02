@@ -49,7 +49,7 @@
 ### ID Card (according to W3C template)
 
 * **Name:** ARCES_32char
-* **Picture:**
+* **Picture:** https://www.sparkfun.com/datasheets/LCD/HD44780.pdf
 * **Logo:** 
 * **Hardware:** RaspberryPi3 + HD44780 Display
 * **Software:** C
