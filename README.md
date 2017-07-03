@@ -1,4 +1,4 @@
-# Demo for the WoT IG/WG F2F Meeting (9-13 July 2017 in Dusseldorf) PlugFest
+# Demo for the WoT PlugFest (10 July 2017 in Dusseldorf) 
 
 # Things list
 1. [RFID Reader](https://github.com/arces-wot/WOT-Demo/blob/master/README.md#rfid-reader)
