@@ -264,7 +264,7 @@
 * **Software:** C firmware
 * **WoT Functions**
   * __Role:__ client
-  * __Protocols:__ HTTP/Websocket
+  * __Protocols:__ HTTP
   * __Encodings:__ UTF-8
   * __Discovery:__ discovery through SPARQL query/subscription on SEPA
   * __Application Logic:__ communicates the reading of its reed sensor
