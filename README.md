@@ -280,7 +280,7 @@
 
 ### Thing Description
 
-```
+```json
 {
     "@context": {
 	"wot": "http://wot.arces.unibo.it/sepa#",
