@@ -59,8 +59,8 @@ gcc main_lcd.c ../../sepa-C-kpi/sepa_producer.c ../../sepa-C-kpi/sepa_utilities.
 #define PREFIX_TD               			"PREFIX td:<http://www.w3.org/ns/td#> "
 #define PREFIX_DUL              			"PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> "
 #define PREFIX_XSD							"PREFIX xsd:<http://www.w3.org/2001/XMLSchema#> "
-#define SEPA_SUBSCRIPTION_ADDRESS			"ws://192.168.1.146:9000/subscribe"
-#define SEPA_UPDATE_ADDRESS					"http://192.168.1.146:8000/update"
+#define SEPA_SUBSCRIPTION_ADDRESS			"ws://192.168.1.100:9000/subscribe"
+#define SEPA_UPDATE_ADDRESS					"http://192.168.1.100:8000/update"
 
 int lcd;
 volatile sig_atomic_t alive = 1;
