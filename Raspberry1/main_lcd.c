@@ -53,6 +53,7 @@ gcc main_lcd.c ../../sepa-C-kpi/sepa_producer.c ../../sepa-C-kpi/sepa_utilities.
 #define LCD_WRITEACTION_NAME    			"Raspi16x2LCD_Write"
 #define LCD_WRITEACTION_INPUT_TYPE 			"wot:LCDWriteActionInputType"
 #define SEPA_PROTOCOL						"wot:SEPAProtocol"
+#define WOT									"http://wot.arces.unibo.it/sepa#"
 
 #define PREFIX_WOT              			"PREFIX wot:<http://wot.arces.unibo.it/sepa#> "
 #define PREFIX_RDF              			"PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
@@ -114,7 +115,7 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
     // declare Action LCDWrite
-    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE {"THING_UUID" td:hasAction "LCD_WRITEACTION". "LCD_WRITEACTION" rdf:type td:Action. "LCD_WRITEACTION" td:hasName ?oldName. "LCD_WRITEACTION" td:hasInput ?oldInput . ?oldInput rdf:type wot:ActionInput . ?oldInput td:hasDataType ?oldDataType . "LCD_WRITEACTION" wot:isAccessibleBy "SEPA_PROTOCOL"} INSERT {"THING_UUID" td:hasAction "LCD_WRITEACTION". "LCD_WRITEACTION" rdf:type td:Action. "LCD_WRITEACTION" td:hasName '"LCD_WRITEACTION_NAME"'. "LCD_WRITEACTION" td:hasInput ?input . ?input rdf:type wot:ActionInput . ?input td:hasDataType xsd:string . "LCD_WRITEACTION" wot:isAccessibleBy "SEPA_PROTOCOL"} WHERE { "THING_UUID" rdf:type td:Thing . BIND(IRI(concat('wot:Input_',STRUUID())) AS ?input) . OPTIONAL {"THING_UUID" td:hasAction "LCD_WRITEACTION". "LCD_WRITEACTION" rdf:type td:Action. "LCD_WRITEACTION" td:hasName ?oldName. "LCD_WRITEACTION" td:hasInput ?oldInput . ?oldInput rdf:type wot:ActionInput . ?oldInput td:hasDataType ?oldDataType . "LCD_WRITEACTION" wot:isAccessibleBy "SEPA_PROTOCOL"}}",SEPA_UPDATE_ADDRESS,NULL);
+    o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE {"THING_UUID" td:hasAction "LCD_WRITEACTION". "LCD_WRITEACTION" rdf:type td:Action. "LCD_WRITEACTION" td:hasName ?oldName. "LCD_WRITEACTION" td:hasInput ?oldInput . ?oldInput rdf:type wot:ActionInput . ?oldInput td:hasDataType ?oldDataType . "LCD_WRITEACTION" wot:isAccessibleBy "SEPA_PROTOCOL"} INSERT {"THING_UUID" td:hasAction "LCD_WRITEACTION". "LCD_WRITEACTION" rdf:type td:Action. "LCD_WRITEACTION" td:hasName '"LCD_WRITEACTION_NAME"'. "LCD_WRITEACTION" td:hasInput ?input . ?input rdf:type wot:ActionInput . ?input td:hasDataType xsd:string . "LCD_WRITEACTION" wot:isAccessibleBy "SEPA_PROTOCOL"} WHERE { "THING_UUID" rdf:type td:Thing . BIND(IRI(concat('"WOT"Input_',STRUUID())) AS ?input) . OPTIONAL {"THING_UUID" td:hasAction "LCD_WRITEACTION". "LCD_WRITEACTION" rdf:type td:Action. "LCD_WRITEACTION" td:hasName ?oldName. "LCD_WRITEACTION" td:hasInput ?oldInput . ?oldInput rdf:type wot:ActionInput . ?oldInput td:hasDataType ?oldDataType . "LCD_WRITEACTION" wot:isAccessibleBy "SEPA_PROTOCOL"}}",SEPA_UPDATE_ADDRESS,NULL);
     if (o!=HTTP_200_OK) {
         logE("Thing Description " LCD_WRITEACTION_NAME " insert error\n");
         return EXIT_FAILURE;
@@ -141,7 +142,7 @@ int main(int argc, char **argv) {
     signal(SIGINT, INThandler);
     // HeartBeat continuous loop
     while (alive) {
-        o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD PREFIX_XSD "DELETE { "LCD_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT {"LCD_HEART" wot:hasInstance ?newInstance. ?newInstance wot:isGeneratedBy "THING_UUID" . ?newInstance rdf:type wot:EventInstance. ?newInstance wot:hasTimeStamp ?time} WHERE { "LCD_HEART" rdf:type td:Event. BIND(now() AS ?time) . BIND(IRI(concat('wot:Event_',STRUUID())) AS ?newInstance) . OPTIONAL {"LCD_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",SEPA_UPDATE_ADDRESS,NULL);
+        o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD PREFIX_XSD "DELETE { "LCD_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT {"LCD_HEART" wot:hasInstance ?newInstance. ?newInstance wot:isGeneratedBy "THING_UUID" . ?newInstance rdf:type wot:EventInstance. ?newInstance wot:hasTimeStamp ?time} WHERE { "LCD_HEART" rdf:type td:Event. BIND(now() AS ?time) . BIND(IRI(concat('"WOT"Event_',STRUUID())) AS ?newInstance) . OPTIONAL {"LCD_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",SEPA_UPDATE_ADDRESS,NULL);
         if (o!=HTTP_200_OK) {
             logE("Thing Description heartbeat update error in " THING_UUID "\n");
             return EXIT_FAILURE;
