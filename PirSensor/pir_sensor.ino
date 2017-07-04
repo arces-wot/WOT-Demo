@@ -1,4 +1,3 @@
-#include <ESP8266TrueRandom.h>
 #include <ESP8266WiFi.h>
 
 // network settings
@@ -32,7 +31,7 @@ int loopCount = 0;
 int instanceCounter = 0;
 
 // declare namespaces and other updated-related variables
-String ns = String("PREFIX wot:<http://wot.arces.unibo.it/sepa#> PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> PREFIX ire:<http://w3c.github.io/wot/w3c-wot-td-ire.owl#> PREFIX rdfs:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX td:<http://www.w3.org/ns/td#> ");
+String ns = String("PREFIX wot:<http://wot.arces.unibo.it/sepa#> PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> ");
 String td;
 
 // declare a wifi client
