@@ -5,6 +5,7 @@
 2. [32 Chars LCD Display](https://github.com/arces-wot/WOT-Demo/blob/master/README.md#32-chars-lcd-display)
 3. [Reed sensor](https://github.com/arces-wot/WOT-Demo/blob/master/README.md#reed-sensor)
 4. [RGB blinking LED](https://github.com/arces-wot/WOT-Demo/blob/master/README.md#rgb-blinking-led)
+5. [PIR sensor](https://github.com/arces-wot/WOT-Demo/blob/master/README.md#pir-sensor)
 
 # Web Things - Templates and Thing Descriptions
 
@@ -314,6 +315,72 @@
 		"wot:ReedSensorValueProperty"
 	    ],
 	    "name": "Reed Sensor Value Property",
+	    "outputData": {
+		"valueType": {
+		    "type": "boolean",
+		}
+	    },
+	    "writable": false,
+	    "stability": -1
+	}
+    ]
+}
+```
+
+## PIR Sensor
+### ID Card (according to W3C template)
+
+* **Name:** ARCES Pir Sensor
+* **Picture:**
+
+![](https://github.com/arces-wot/WOT-Demo/blob/master/images/pir.jpg)
+* **Logo:** 
+* **Hardware:** LoLin V3 (ESP8266) + PIR Sensor HR-501
+* **Software:** C firmware
+* **WoT Functions**
+  * __Role:__ client
+  * __Protocols:__ HTTP
+  * __Encodings:__ UTF-8
+  * __Discovery:__ discovery through SPARQL query/subscription on SEPA
+  * __Application Logic:__ communicates the reading of its pir sensor
+* __Textual description__: This Web Thing is discoverable through a SPARQL Event Processing Architecture (SEPA) and exploits it to communicate the value sensed by its PIR sensor (true/false).
+
+### Thing Description
+
+```json
+{
+    "@context": {
+	"wot": "http://wot.arces.unibo.it/sepa#",
+	"td": "http://www.w3.org/ns/td#"
+    },
+    "@type": "td:Thing",
+    "name": "Pir Sensor",
+    "interactions": [
+	{
+	    "@type": [
+		"td:Event",
+		"wot:PirSensorHeartbeatEvent"
+	    ],
+	    "name": "Pir Sensor Heartbeat"
+	},
+	{
+	    "@type": [
+		"td:Event",
+		"wot:PirSensorValueChangedEvent"
+	    ],
+	    "name": "Pir Sensor Value Changed",
+	    "outputData": {
+		"valueType": {
+		    "type": "boolean"
+		}
+	    }
+	},
+      	{
+	    "@type": [
+		"td:Property",
+		"wot:PirSensorValueProperty"
+	    ],
+	    "name": "Pir Sensor Value Property",
 	    "outputData": {
 		"valueType": {
 		    "type": "boolean",
