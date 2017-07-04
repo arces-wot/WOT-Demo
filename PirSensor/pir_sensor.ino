@@ -8,19 +8,19 @@ int sepaPort = 8000;
 
 // device data
 String thingId = ""; 
-char thingName[] = "ARCES Reed Sensor";
+char thingName[] = "ARCES Pir Sensor";
 
 // Things Properties
-char rsPropertyId[] = "wot:ReedSensorValueProperty";
-char rsPropertyName[] = "Reed Sensor Value Property";
-char rsPropertyValueType[] = "wot:ReedSensorPropertyValueType";
+char rsPropertyId[] = "wot:PirSensorValueProperty";
+char rsPropertyName[] = "Pir Sensor Value Property";
+char rsPropertyValueType[] = "wot:PirSensorPropertyValueType";
 
 // Thing Events
-char rsEventId[] = "wot:ReedSensorValueChangedEvent";
-char rsEventName[] = "Reed Sensor Value Changed";
-char rsEventValueType[] = "wot:ReedSensorEventValueType";
-char hbEventId[] = "wot:ReedSensorHeartbeatEvent";
-char hbEventName[] = "Reed Sensor Heartbeat";
+char rsEventId[] = "wot:PirSensorValueChangedEvent";
+char rsEventName[] = "Pir Sensor Value Changed";
+char rsEventValueType[] = "wot:PirSensorEventValueType";
+char hbEventId[] = "wot:PirSensorHeartbeatEvent";
+char hbEventName[] = "Pir Sensor Heartbeat";
 
 // sensor data
 int sigPin = 14;
@@ -291,6 +291,6 @@ void loop() {
   }
    
   // delay
-  delay(1000); 
+  delay(500); 
   
 }
