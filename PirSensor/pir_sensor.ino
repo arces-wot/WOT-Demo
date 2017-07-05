@@ -1,4 +1,3 @@
-#include <ESP8266TrueRandom.h>
 #include <ESP8266WiFi.h>
 
 // network settings
@@ -8,19 +7,19 @@ int sepaPort = 8000;
 
 // device data
 String thingId = ""; 
-char thingName[] = "ARCES Reed Sensor";
+char thingName[] = "ARCES Pir Sensor";
 
 // Things Properties
-char rsPropertyId[] = "wot:ReedSensorValueProperty";
-char rsPropertyName[] = "Reed Sensor Value Property";
-char rsPropertyValueType[] = "wot:ReedSensorPropertyValueType";
+char rsPropertyId[] = "wot:PirSensorValueProperty";
+char rsPropertyName[] = "Pir Sensor Value Property";
+char rsPropertyValueType[] = "wot:PirSensorPropertyValueType";
 
 // Thing Events
-char rsEventId[] = "wot:ReedSensorValueChangedEvent";
-char rsEventName[] = "Reed Sensor Value Changed";
-char rsEventValueType[] = "wot:ReedSensorEventValueType";
-char hbEventId[] = "wot:ReedSensorHeartbeatEvent";
-char hbEventName[] = "Reed Sensor Heartbeat";
+char rsEventId[] = "wot:PirSensorValueChangedEvent";
+char rsEventName[] = "Pir Sensor Value Changed";
+char rsEventValueType[] = "wot:PirSensorEventValueType";
+char hbEventId[] = "wot:PirSensorHeartbeatEvent";
+char hbEventName[] = "Pir Sensor Heartbeat";
 
 // sensor data
 int sigPin = 14;
@@ -32,7 +31,7 @@ int loopCount = 0;
 int instanceCounter = 0;
 
 // declare namespaces and other updated-related variables
-String ns = String("PREFIX wot:<http://wot.arces.unibo.it/sepa#> PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> PREFIX ire:<http://w3c.github.io/wot/w3c-wot-td-ire.owl#> PREFIX rdfs:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX td:<http://www.w3.org/ns/td#> ");
+String ns = String("PREFIX wot:<http://wot.arces.unibo.it/sepa#> PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> ");
 String td;
 
 // declare a wifi client
@@ -291,6 +290,6 @@ void loop() {
   }
    
   // delay
-  delay(1000); 
+  delay(500); 
   
 }
