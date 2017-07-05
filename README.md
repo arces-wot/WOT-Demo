@@ -41,16 +41,16 @@
     {
       "@type": [
         "td:Event",
-        "wot:RFIDReaderPing"
+        "wot:Ping"
       ],
       "name": "RFID Reader is alive even"
     },
     {
       "@type": [
         "td:Event",
-        "wot:TagsPollChanged"
+        "wot:RFIDReading"
       ],
-      "name": "TagsPollChanged",
+      "name": "RFID Reading",
       "outputData": {
         "valueType": {
           "type": "string"
@@ -93,7 +93,7 @@
     {
       "@type": [
         "td:Event",
-        "wot:LCDHeartBeatEvent"
+        "wot:Ping"
       ],
       "name": "Raspi16x2LCDAlive"
     },
@@ -144,7 +144,7 @@
     {
       "@type": [
         "td:Event",
-        "wot:3ColourHeartBeatEvent"
+        "wot:Ping"
       ],
       "name": "Raspi3ColourAlive"
     },
@@ -293,7 +293,7 @@
 	{
 	    "@type": [
 		"td:Event",
-		"wot:ReedSensorHeartbeatEvent"
+		"wot:Ping"
 	    ],
 	    "name": "Reed Sensor Heartbeat"
 	},
@@ -359,7 +359,7 @@
 	{
 	    "@type": [
 		"td:Event",
-		"wot:PirSensorHeartbeatEvent"
+		"wot:Ping"
 	    ],
 	    "name": "Pir Sensor Heartbeat"
 	},
