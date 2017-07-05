@@ -1,0 +1,20 @@
+group 'it.arces.wot'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compile group:'it.unibo.arces.wot', name:'client-pac-pattern', version: '0.7.5'
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+
+}
+
+mainClassName = 'it.arces.wot.statemonitorthing.StateMonitorThing'
