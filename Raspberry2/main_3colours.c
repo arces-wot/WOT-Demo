@@ -40,7 +40,7 @@ gcc main_3colours.c ../../sepa-C-kpi/sepa_utilities.c ../../sepa-C-kpi/sepa_cons
 
 #define THING_UUID			    	"wot:Raspberry2"
 #define THING_NAME              	"ARCES_RGB_Led"
-#define RGB_HEART               	"wot:3ColourHeartBeatEvent"
+#define RGB_HEART               	"wot:Ping"
 #define RGB_HEART_NAME          	"Raspi3ColourAlive"
 #define RGB_COLOURACTION        	"wot:ChangeColourAction"
 #define RGB_COLOURACTION_NAME   	"ChangeRGBLedColour"
@@ -183,6 +183,7 @@ int main(int argc, char **argv) {
 	printf("* WOT Team (ARCES University of Bologna) - francesco.antoniazzi@unibo.it\n");
 	printf("\n\nPress Ctrl-C to exit\n\n");
 
+	lws_set_log_level(LLL_ERR | LLL_WARN,NULL);
     wiringPiSetup();
     pinMode(R_PIN,OUTPUT);
     pinMode(G_PIN,OUTPUT);

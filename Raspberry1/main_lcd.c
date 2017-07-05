@@ -47,7 +47,7 @@ gcc main_lcd.c ../../sepa-C-kpi/sepa_producer.c ../../sepa-C-kpi/sepa_utilities.
 
 #define THING_UUID			    			"wot:Raspberry1"
 #define THING_NAME              			"ARCES_32char"
-#define LCD_HEART               			"wot:LCDHeartBeatEvent"
+#define LCD_HEART               			"wot:Ping"
 #define LCD_HEART_NAME          			"Raspi16x2LCDAlive"
 #define LCD_WRITEACTION         			"wot:LCDWriteAction"
 #define LCD_WRITEACTION_NAME    			"Raspi16x2LCD_Write"
@@ -85,7 +85,7 @@ void actionRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,
 				lcdPuts(lcd,added[i].value);
             }
 		}
-		fprintfSepaNodes(stdout,added,addedlen,"");
+		//fprintfSepaNodes(stdout,added,addedlen,"");
 		freeSepaNodes(added,addedlen);
 	}
 	printf("\n");
@@ -100,6 +100,7 @@ int main(int argc, char **argv) {
 	printf("* WOT Team (ARCES University of Bologna) - francesco.antoniazzi@unibo.it\n");
 	printf("\n\nPress Ctrl-C to exit\n\n");
 
+	lws_set_log_level(LLL_ERR | LLL_WARN,NULL);
     //LCD initialization
 	wiringPiSetup();
 	lcd = lcdInit(ROW_NUMBER,COL_NUMBER,DATA_BITS,LCD_RS,LCD_E,LCD_D4,LCD_D5,LCD_D6,LCD_D7,0,0,0,0);
