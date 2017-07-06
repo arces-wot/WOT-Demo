@@ -151,7 +151,7 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,int removedlen) {
 	int i,o;
 	char updateSPARQL[1000];
-	rgbf newFrequency = {.r=-1,.g=-1,.b=-1,.f=-1};
+	rgbf newFrequency = {.r=KEEP_OLD_VALUE,.g=KEEP_OLD_VALUE,.b=KEEP_OLD_VALUE,.f=KEEP_OLD_VALUE};
 	if (added!=NULL) {
 		if (addedlen>1) printf("%d new request detected. On the screen only the last will be shown.\n",addedlen);
 		else printf("New request detected!\n!");
@@ -287,7 +287,7 @@ int main(int argc, char **argv) {
     signal(SIGINT, HeartBeatHandler);
     // HeartBeat continuous loop
     while (alive) {
-        o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { "RGB_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy ?thing . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT {"RGB_HEART" wot:hasInstance ?newInstance. ?newInstance wot:isGeneratedBy "THING_UUID" . ?newInstance rdf:type wot:EventInstance. ?newInstance wot:hasTimeStamp ?time} WHERE { "RGB_HEART" rdf:type td:Event. BIND(now() AS ?time) . BIND(IRI(concat('"WOT"Event_',STRUUID())) AS ?newInstance) . OPTIONAL {"RGB_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",SEPA_UPDATE_ADDRESS,NULL);
+        o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { "RGB_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT {"RGB_HEART" wot:hasInstance ?newInstance. ?newInstance wot:isGeneratedBy "THING_UUID" . ?newInstance rdf:type wot:EventInstance. ?newInstance wot:hasTimeStamp ?time} WHERE { "RGB_HEART" rdf:type td:Event. BIND(now() AS ?time) . BIND(IRI(concat('"WOT"Event_',STRUUID())) AS ?newInstance) . OPTIONAL {"RGB_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",SEPA_UPDATE_ADDRESS,NULL);
         if (o!=HTTP_200_OK) {
             logE("Thing Description heartbeat update error in " THING_UUID "\n");
             return EXIT_FAILURE;
