@@ -1,7 +1,7 @@
 {
 	"parameters":
 	{
-		"host":"wot.arces.unibo.it",
+		"host":"192.168.1.100",
 		"ports":
 		{
 			"http":8000,
