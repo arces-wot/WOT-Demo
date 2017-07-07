@@ -40,7 +40,7 @@ gcc main_3colours.c ../../sepa-C-kpi/sepa_utilities.c ../../sepa-C-kpi/sepa_cons
 
 #define THING_UUID			    	"wot:Raspberry2"
 #define THING_NAME              	"ARCES_RGB_Led"
-#define RGB_HEART               	"wot:3ColourHeartBeatEvent"
+#define RGB_HEART               	"wot:Ping"
 #define RGB_HEART_NAME          	"Raspi3ColourAlive"
 #define RGB_COLOURACTION        	"wot:ChangeColourAction"
 #define RGB_COLOURACTION_NAME   	"ChangeRGBLedColour"
@@ -97,7 +97,7 @@ void blink_process() {
     rgbf input={.r=LOW,.g=LOW,.b=LOW,.f=LOW};
     while (1) {
         if (new_data) {
-			logD("Got new values! r=%d,g=%d,b=%d,f=%d\n",newData.r,newData.g,newData.b,newData.f);
+			printf("Got new values! r=%d,g=%d,b=%d,f=%d\n",newData.r,newData.g,newData.b,newData.f);
 			new_data = 0;
 			if (newData.r!=KEEP_OLD_VALUE) input.r=newData.r;
 			if (newData.g!=KEEP_OLD_VALUE) input.g=newData.g;
@@ -151,7 +151,7 @@ void changeColorRequestNotification(sepaNode * added,int addedlen,sepaNode * rem
 void changeFrequencyRequestNotification(sepaNode * added,int addedlen,sepaNode * removed,int removedlen) {
 	int i,o;
 	char updateSPARQL[1000];
-	rgbf newFrequency = {.r=-1,.g=-1,.b=-1,.f=-1};
+	rgbf newFrequency = {.r=KEEP_OLD_VALUE,.g=KEEP_OLD_VALUE,.b=KEEP_OLD_VALUE,.f=KEEP_OLD_VALUE};
 	if (added!=NULL) {
 		if (addedlen>1) printf("%d new request detected. On the screen only the last will be shown.\n",addedlen);
 		else printf("New request detected!\n!");
@@ -183,6 +183,7 @@ int main(int argc, char **argv) {
 	printf("* WOT Team (ARCES University of Bologna) - francesco.antoniazzi@unibo.it\n");
 	printf("\n\nPress Ctrl-C to exit\n\n");
 
+	lws_set_log_level(LLL_ERR | LLL_WARN,NULL);
     wiringPiSetup();
     pinMode(R_PIN,OUTPUT);
     pinMode(G_PIN,OUTPUT);
@@ -286,7 +287,7 @@ int main(int argc, char **argv) {
     signal(SIGINT, HeartBeatHandler);
     // HeartBeat continuous loop
     while (alive) {
-        o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { "RGB_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy ?thing . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT {"RGB_HEART" wot:hasInstance ?newInstance. ?newInstance wot:isGeneratedBy "THING_UUID" . ?newInstance rdf:type wot:EventInstance. ?newInstance wot:hasTimeStamp ?time} WHERE { "RGB_HEART" rdf:type td:Event. BIND(now() AS ?time) . BIND(IRI(concat('"WOT"Event_',STRUUID())) AS ?newInstance) . OPTIONAL {"RGB_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",SEPA_UPDATE_ADDRESS,NULL);
+        o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { "RGB_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT {"RGB_HEART" wot:hasInstance ?newInstance. ?newInstance wot:isGeneratedBy "THING_UUID" . ?newInstance rdf:type wot:EventInstance. ?newInstance wot:hasTimeStamp ?time} WHERE { "RGB_HEART" rdf:type td:Event. BIND(now() AS ?time) . BIND(IRI(concat('"WOT"Event_',STRUUID())) AS ?newInstance) . OPTIONAL {"RGB_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",SEPA_UPDATE_ADDRESS,NULL);
         if (o!=HTTP_200_OK) {
             logE("Thing Description heartbeat update error in " THING_UUID "\n");
             return EXIT_FAILURE;
