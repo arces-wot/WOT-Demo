@@ -101,7 +101,7 @@ public class WatchDog extends Thread implements IWatchDog{
 
         @Override
         public synchronized void onResults(ARBindingsResults results) {
-
+            last_ping = System.currentTimeMillis();
         }
 
         @Override

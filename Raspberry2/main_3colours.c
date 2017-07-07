@@ -97,7 +97,7 @@ void blink_process() {
     rgbf input={.r=LOW,.g=LOW,.b=LOW,.f=LOW};
     while (1) {
         if (new_data) {
-			logD("Got new values! r=%d,g=%d,b=%d,f=%d\n",newData.r,newData.g,newData.b,newData.f);
+			printf("Got new values! r=%d,g=%d,b=%d,f=%d\n",newData.r,newData.g,newData.b,newData.f);
 			new_data = 0;
 			if (newData.r!=KEEP_OLD_VALUE) input.r=newData.r;
 			if (newData.g!=KEEP_OLD_VALUE) input.g=newData.g;
