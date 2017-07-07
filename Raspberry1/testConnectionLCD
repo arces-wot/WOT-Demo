@@ -1,6 +1,9 @@
 #!/bin/bash
 
-while 1; do
+cd /home/pi/projects/WOT-Demo/Raspberry1
+eval `cat main_lcd.c | grep gcc`
+
+while true; do
 # wait for connection
 while ! ping -q -t 5 -w1 -c1 192.168.1.100; do
 	echo "No connection"
@@ -9,7 +12,5 @@ done
 
 # now we are connected
 # ...start your script!
-
-cd /home/pi/projects/WOT-Demo/Raspberry1
 ./main_lcd
 done
