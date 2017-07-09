@@ -61,8 +61,8 @@ gcc main_3colours.c ../../sepa-C-kpi/sepa_utilities.c ../../sepa-C-kpi/sepa_cons
 #define PREFIX_DUL              	"PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> "
 #define PREFIX_XSD					"PREFIX xsd:<http://www.w3.org/2001/XMLSchema#> "
 
-#define SEPA_SUBSCRIPTION_ADDRESS	"ws://192.168.1.100:9000/subscribe"
-#define SEPA_UPDATE_ADDRESS			"http://192.168.1.100:8000/update"
+#define SEPA_SUBSCRIPTION_ADDRESS	"ws://10.10.10.100:9000/subscribe"
+#define SEPA_UPDATE_ADDRESS			"http://10.10.10.100:8000/update"
 
 #define HIGH						1
 #define LOW							0
