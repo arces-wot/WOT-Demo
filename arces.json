@@ -1,0 +1,32 @@
+{
+	"@context": ["http://w3c.github.io/wot/w3c-wot-td-context.jsonld", "http://w3c.github.io/wot/w3c-wot-common-context.jsonld"],
+	"@type": ["Thing"],
+	"name": "ARCESWebThing",
+	"base": "http://192.168.1.106:5000/",
+	"interaction": [
+		{
+			"@type": ["Action", "LCDWriteAction"],
+			"name": "LCDWriteAction",
+			"link": [{
+				"href": "/LCDWriteAction",
+				"mediaType": "application/x-www-form-urlencoded"
+			}]
+		},
+		{
+			"@type": ["Action", "ChangeColorAction"],
+			"name": "ChangeColorAction",
+			"link": [{
+				"href": "/changeColorAction",
+				"mediaType": "application/x-www-form-urlencoded"
+			}]
+		},
+		{
+			"@type": ["Action", "ChangeFrequencyAction"],
+			"name": "ChangeColorAction",
+			"link": [{
+				"href": "/changeFrequencyAction",
+				"mediaType": "application/x-www-form-urlencoded"
+			}]
+		}
+	]
+}
