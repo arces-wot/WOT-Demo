@@ -61,8 +61,8 @@ gcc main_3colours.c ../../sepa-C-kpi/sepa_utilities.c ../../sepa-C-kpi/sepa_cons
 #define PREFIX_DUL              	"PREFIX dul:<http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> "
 #define PREFIX_XSD					"PREFIX xsd:<http://www.w3.org/2001/XMLSchema#> "
 
-#define SEPA_SUBSCRIPTION_ADDRESS	"ws://192.168.1.100:9000/subscribe"
-#define SEPA_UPDATE_ADDRESS			"http://192.168.1.100:8000/update"
+#define SEPA_SUBSCRIPTION_ADDRESS	"ws://10.10.10.100:9000/subscribe"
+#define SEPA_UPDATE_ADDRESS			"http://10.10.10.100:8000/update"
 
 #define HIGH						1
 #define LOW							0
@@ -287,7 +287,7 @@ int main(int argc, char **argv) {
     signal(SIGINT, HeartBeatHandler);
     // HeartBeat continuous loop
     while (alive) {
-        o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { "RGB_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT {"RGB_HEART" wot:hasInstance ?newInstance. ?newInstance wot:isGeneratedBy "THING_UUID" . ?newInstance rdf:type wot:EventInstance. ?newInstance wot:hasTimeStamp ?time} WHERE { "RGB_HEART" rdf:type td:Event. BIND(now() AS ?time) . BIND(IRI(concat('"WOT"Event_',STRUUID())) AS ?newInstance) . OPTIONAL {"RGB_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",SEPA_UPDATE_ADDRESS,NULL);
+        o=kpProduce(PREFIX_WOT PREFIX_RDF PREFIX_DUL PREFIX_TD "DELETE { "RGB_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . "THING_UUID" wot:isDiscoverable ?discoverable. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp} INSERT {"RGB_HEART" wot:hasInstance ?newInstance. ?newInstance wot:isGeneratedBy "THING_UUID" . "THING_UUID" wot:isDiscoverable 'true'. ?newInstance rdf:type wot:EventInstance. ?newInstance wot:hasTimeStamp ?time} WHERE { "RGB_HEART" rdf:type td:Event. BIND(now() AS ?time) . BIND(IRI(concat('"WOT"Event_',STRUUID())) AS ?newInstance) . OPTIONAL {"RGB_HEART" wot:hasInstance ?oldInstance. ?oldInstance rdf:type wot:EventInstance. ?oldInstance wot:isGeneratedBy "THING_UUID" . "THING_UUID" wot:isDiscoverable ?discoverable. ?oldInstance wot:hasTimeStamp ?eOldTimeStamp}}",SEPA_UPDATE_ADDRESS,NULL);
         if (o!=HTTP_200_OK) {
             logE("Thing Description heartbeat update error in " THING_UUID "\n");
             return EXIT_FAILURE;
