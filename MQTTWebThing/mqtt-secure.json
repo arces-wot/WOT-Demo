@@ -1,0 +1,10 @@
+{
+	"url" : "giove.mars" ,
+	"port" : 8883 ,
+	"topics" : ["arces/servers/#"]
+	 ,
+	"ssl" : {
+		"caCrtFile" : "/usr/local/mosquitto-certs/ca.crt" ,
+		"crtFile" : "/usr/local/mosquitto-certs/mml.crt" ,
+		"keyFile" : "/usr/local/mosquitto-certs/mml.key"}
+}
