@@ -1,5 +1,0 @@
-{
-	"url" : "giove.mars" ,
-	"port" : 1883 ,
-	"topics" : ["#"]
-}

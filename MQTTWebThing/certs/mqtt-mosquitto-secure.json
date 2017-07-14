@@ -1,0 +1,8 @@
+{
+	"url" : "test.mosquitto.org" ,
+	"port" : 8883 ,
+	"topics" : ["#"]
+	 ,
+	"ssl" : {
+		"serverCertificate" : "mosquitto.org.crt"}
+}

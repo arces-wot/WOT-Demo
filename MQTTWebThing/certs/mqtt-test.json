@@ -1,0 +1,5 @@
+{
+	"url" : "test.mosquitto.org" ,
+	"port" : 1883 ,
+	"topics" : ["#"]
+}
