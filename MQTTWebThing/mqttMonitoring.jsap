@@ -1,6 +1,6 @@
 {
 	"parameters" : {
-		"host" : "wot.arces.unibo.it" ,
+		"host" : "www.vaimee.com" ,
 		"ports" : {
 			"http" : 8000 ,
 			"https" : 8443 ,
