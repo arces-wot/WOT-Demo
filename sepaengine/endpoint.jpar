@@ -5,8 +5,8 @@
 			"http": 3030
 		},
 		"paths": {
-			"update": "/sepa/update",
-			"query": "/sepa/query"
+			"update": "/mqtt/update",
+			"query": "/mqtt/query"
 		},
 		"methods": {
 			"query": "POST",
