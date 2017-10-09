@@ -1,0 +1,20 @@
+{
+	"parameters": {
+		"host": "localhost",
+		"ports": {
+			"http": 3030
+		},
+		"paths": {
+			"update": "/sepa/update",
+			"query": "/sepa/query"
+		},
+		"methods": {
+			"query": "POST",
+			"update": "URL_ENCODED_POST"
+		},
+		"formats": {
+			"update": "HTML",
+			"query": "JSON"
+		}
+	}
+}
