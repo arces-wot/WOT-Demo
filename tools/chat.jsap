@@ -1,6 +1,6 @@
 {
 	"parameters" : {
-		"host" : "localhost" ,
+		"host" : "www.vaimee.com" ,
 		"concurrentRequests" : 5 ,
 		"ports" : {
 			"http" : 8000 ,
